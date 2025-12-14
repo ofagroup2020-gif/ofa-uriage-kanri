@@ -7,121 +7,118 @@
 
   <style>
     :root{
-      --bg:#0b1220;
-      --card:#111b2f;
-      --line:rgba(255,255,255,.12);
-      --text:#e9f1ff;
-      --muted:rgba(233,241,255,.70);
-      --accent:#ffd400;
-      --ok:#19c37d;
-      --bad:#ff5c5c;
-      --shadow:0 12px 28px rgba(0,0,0,.35);
-      --radius:18px;
+      --bg:#ffffff;
+      --card:#ffffff;
+      --border:#dddddd;
+      --text:#111111;
+      --muted:#666666;
+
+      --yellow:#FFD400;
+      --black:#111111;
+      --red:#E60012;
+      --green:#0FA958;
+      --blue:#0066CC;
+
+      --radius:12px;
     }
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: system-ui,-apple-system,"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
-      background: radial-gradient(1200px 600px at 15% 10%, rgba(255,212,0,.18), transparent 60%),
-                  radial-gradient(900px 500px at 85% 25%, rgba(25,195,125,.12), transparent 55%),
-                  radial-gradient(900px 500px at 65% 95%, rgba(52,152,219,.16), transparent 55%),
-                  var(--bg);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+      background:var(--bg);
       color:var(--text);
     }
-    .wrap{max-width:1100px;margin:0 auto;padding:18px 14px 120px}
+    .wrap{max-width:1200px;margin:0 auto;padding:16px 14px 120px}
     .topbar{
       position:sticky;top:0;z-index:50;
-      display:flex;gap:12px;align-items:center;justify-content:space-between;
-      padding:14px 10px;margin:-18px -14px 16px;
-      backdrop-filter: blur(10px);
-      background: linear-gradient(to bottom, rgba(11,18,32,.85), rgba(11,18,32,.35));
-      border-bottom:1px solid rgba(255,255,255,.08);
+      background:#fff;
+      border-bottom:2px solid var(--black);
+      padding:12px 10px;
+      margin:-16px -14px 14px;
+      display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;
     }
     .brand{display:flex;gap:10px;align-items:center}
     .logo{
-      width:44px;height:44px;border-radius:14px;
-      background: linear-gradient(135deg, rgba(255,212,0,.95), rgba(255,120,0,.95));
-      box-shadow:0 12px 20px rgba(255,212,0,.16);
-      display:grid;place-items:center;font-weight:900;color:#111;letter-spacing:.04em;
+      width:44px;height:44px;border-radius:12px;
+      background:var(--yellow);
+      border:2px solid var(--black);
+      display:grid;place-items:center;
+      font-weight:900;color:#000;
+      letter-spacing:.02em;
     }
-    .brand h1{font-size:16px;margin:0;line-height:1.15}
-    .brand .sub{font-size:12px;color:var(--muted);margin-top:2px}
+    .brand h1{margin:0;font-size:16px;font-weight:900}
+    .brand .sub{margin-top:2px;color:var(--muted);font-size:12px;font-weight:700}
+
     .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
     button,.btn{
-      border:0;cursor:pointer;
-      padding:10px 12px;border-radius:12px;
-      color:var(--text);
-      background: rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.10);
-      box-shadow: 0 10px 18px rgba(0,0,0,.20);
-      display:inline-flex;gap:8px;align-items:center;justify-content:center;
-      font-weight:800;
+      padding:10px 14px;
+      border-radius:10px;
+      border:2px solid var(--black);
+      background:#f5f5f5;
+      font-weight:900;
+      cursor:pointer;
     }
-    button:hover,.btn:hover{filter:brightness(1.06)}
-    .btn-accent{background:rgba(255,212,0,.16);border-color:rgba(255,212,0,.22)}
-    .btn-ok{background:rgba(25,195,125,.14);border-color:rgba(25,195,125,.22)}
-    .btn-bad{background:rgba(255,92,92,.14);border-color:rgba(255,92,92,.22)}
+    button:hover,.btn:hover{opacity:.9}
+    .btn-yellow{background:var(--yellow);color:#000}
+    .btn-green{background:var(--green);color:#fff;border-color:#0b6f3d}
+    .btn-blue{background:var(--blue);color:#fff;border-color:#003e7a}
+    .btn-red{background:var(--red);color:#fff;border-color:#8f000b}
+
     .card{
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      border:1px solid rgba(255,255,255,.10);
+      background:var(--card);
+      border:2px solid var(--black);
       border-radius:var(--radius);
-      box-shadow:var(--shadow);
       padding:14px;
+      margin-bottom:14px;
     }
-    h2{margin:0 0 10px;font-size:14px}
-    .muted{color:var(--muted)}
+    h2{margin:0 0 10px;font-size:15px;font-weight:900}
+    .muted{color:var(--muted);font-size:12px;line-height:1.6}
     .row{display:grid;gap:10px}
-    @media(min-width:720px){
+    @media(min-width:860px){
       .row.cols2{grid-template-columns:1fr 1fr}
       .row.cols3{grid-template-columns:1fr 1fr 1fr}
       .row.cols4{grid-template-columns:1fr 1fr 1fr 1fr}
     }
-    label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}
+    label{display:block;font-size:12px;font-weight:900;margin:0 0 4px}
     input,select,textarea{
       width:100%;
-      background:rgba(0,0,0,.25);
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:12px;
-      color:var(--text);
-      padding:10px 12px;
-      outline:none;
+      padding:10px;
+      border-radius:10px;
+      border:1px solid var(--border);
       font-size:14px;
+      background:#fff;
+      color:var(--text);
+      outline:none;
     }
     textarea{min-height:90px;resize:vertical}
+    .hr{height:2px;background:#000;opacity:.12;margin:12px 0}
+
+    .pill{
+      display:inline-flex;gap:8px;align-items:center;
+      padding:8px 10px;border-radius:999px;
+      border:1px solid var(--border);
+      background:#fafafa;
+      font-size:12px;font-weight:900;color:#000;
+    }
+    .good{color:var(--green);font-weight:900}
+    .bad{color:var(--red);font-weight:900}
+    .blue{color:var(--blue);font-weight:900}
+
     table{
       width:100%;
-      border-collapse:separate;
-      border-spacing:0;
-      overflow:hidden;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.18);
+      border-collapse:collapse;
+      font-size:13px;
+      background:#fff;
     }
-    th,td{padding:10px 10px;border-bottom:1px solid rgba(255,255,255,.08);font-size:12.5px}
-    th{color:var(--muted);text-align:left;background:rgba(255,255,255,.04);font-weight:900}
-    tr:last-child td{border-bottom:none}
-    .right{text-align:right}
-    .hr{height:1px;background:rgba(255,255,255,.10);margin:12px 0}
-    .pill{
-      padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.06);font-size:12px;color:var(--muted)
-    }
-    .good{color:var(--ok);font-weight:900}
-    .bad{color:var(--bad);font-weight:900}
+    th,td{border:1px solid var(--border);padding:8px}
+    th{background:#f2f2f2;font-weight:900;text-align:left}
+    td.right{text-align:right}
 
-    /* 印刷(PDF)用 */
     @media print{
-      body{background:#fff;color:#000}
-      .topbar,.no-print{display:none !important}
-      .wrap{max-width:none;padding:0}
-      .card{box-shadow:none;border:1px solid #ccc;background:#fff}
-      table{border:1px solid #999;background:#fff}
-      th{background:#f3f3f3;color:#111}
-      td,th{border-bottom:1px solid #ddd;color:#111}
-      .muted{color:#333}
-      .pill{border:1px solid #ccc;background:#f7f7f7;color:#111}
-      .good{color:#0a7d4f}
-      .bad{color:#b80000}
+      .no-print{display:none !important}
+      .wrap{padding:0}
+      .topbar{display:none}
+      .card{border:1px solid #000}
     }
   </style>
 </head>
@@ -133,16 +130,17 @@
       <div class="brand">
         <div class="logo">OFA</div>
         <div>
-          <h1>月次報告フォーム（PDF / CSV出力）</h1>
-          <div class="sub">拠点LPから開く → 入力 → PDF/CSV → LINEで本部へ転送</div>
+          <h1>月次報告フォーム（PDF / CSV）</h1>
+          <div class="sub">入力→PDF/CSV出力→LINE「月次報告」へ転送</div>
         </div>
       </div>
-
       <div class="actions">
-        <button class="btn-accent" id="btnPDF">🖨️ PDF出力</button>
-        <button class="btn" id="btnCSV">⬇️ CSV出力</button>
-        <button class="btn-ok" id="btnSave">💾 端末に保存</button>
-        <button class="btn-bad" id="btnClear">🧹 入力クリア</button>
+        <button class="btn-yellow" id="btnLP">🗾 拠点一覧（LP）</button>
+        <button class="btn-blue" id="btnPDF">🖨️ PDF出力</button>
+        <button class="btn-blue" id="btnCSV">⬇️ CSV出力</button>
+        <button class="btn-green" id="btnLINE">📩 LINE（月次報告）</button>
+        <button class="btn-yellow" id="btnSave">💾 端末に保存</button>
+        <button class="btn-red" id="btnClear">🧹 クリア</button>
       </div>
     </div>
 
@@ -163,7 +161,7 @@
         </div>
         <div>
           <label>入力者名</label>
-          <input type="text" id="reporter" placeholder="例：田中 / ○○FC店 など">
+          <input type="text" id="reporter" placeholder="例：田中 / ○○FC店">
         </div>
         <div>
           <label>担当営業（任意）</label>
@@ -182,12 +180,12 @@
           <select id="pref"></select>
         </div>
         <div>
-          <label>拠点名 / 店舗名（任意）</label>
-          <input type="text" id="base" placeholder="例：福岡南拠点 / ○○FC店">
+          <label>拠点名 / 店舗名</label>
+          <input type="text" id="base" placeholder="例：OFA福岡南 / ○○FC店">
         </div>
         <div>
-          <label>メモ（任意）</label>
-          <input type="text" id="memoShort" placeholder="例：今月は増員 / 台数増">
+          <label>メモ（短文）</label>
+          <input type="text" id="memoShort" placeholder="例：増員/台数増/繁忙など">
         </div>
       </div>
 
@@ -205,14 +203,14 @@
         </div>
         <div>
           <label>その他経費（円）</label>
-          <input type="text" id="otherCost" inputmode="numeric" placeholder="例：高速/外注追加/修理など">
+          <input type="text" id="otherCost" inputmode="numeric" placeholder="例：高速/修理/外注追加等">
         </div>
       </div>
 
-      <div class="row">
+      <div class="row" style="margin-top:10px">
         <div>
-          <label>委託内訳（任意・自由記入）</label>
-          <textarea id="outsourceMemo" placeholder="例：ヤマト 1,200,000円 / 佐川 600,000円 など"></textarea>
+          <label>委託内訳（任意）</label>
+          <textarea id="outsourceMemo" placeholder="例：ヤマト 1,200,000 / 佐川 600,000 など"></textarea>
         </div>
       </div>
 
@@ -220,36 +218,34 @@
 
       <h2>③ 自動計算（確認用）</h2>
       <div class="row cols4">
-        <div class="pill">コスト合計：<b id="costSum">0</b> 円</div>
-        <div class="pill">利益：<b id="profitSum">0</b> 円</div>
-        <div class="pill">利益率：<b id="profitRate">0.0%</b></div>
-        <div class="pill">外注率：<b id="outRate">0.0%</b></div>
+        <div class="pill">コスト合計：<span class="blue" id="costSum">0</span> 円</div>
+        <div class="pill">利益：<span id="profitSum" class="good">0</span> 円</div>
+        <div class="pill">利益率：<span class="blue" id="profitRate">0.0%</span></div>
+        <div class="pill">外注率：<span class="blue" id="outRate">0.0%</span></div>
       </div>
 
       <div class="hr"></div>
 
       <h2>④ 手当（0.3%）</h2>
       <div class="row cols3">
-        <div class="pill">エリアマネ手当（売上×0.3%）：<b id="allowMgr">0</b> 円</div>
-        <div class="pill">営業手当（売上×0.3%）：<b id="allowSales">0</b> 円</div>
-        <div class="pill">手当合計：<b id="allowAll">0</b> 円</div>
+        <div class="pill">エリアマネ手当（売上×0.3%）：<span class="blue" id="allowMgr">0</span> 円</div>
+        <div class="pill">営業手当（売上×0.3%）：<span class="blue" id="allowSales">0</span> 円</div>
+        <div class="pill">手当合計：<span class="blue" id="allowAll">0</span> 円</div>
       </div>
 
       <div class="hr"></div>
 
       <h2>⑤ 長文メモ（任意）</h2>
-      <textarea id="memoLong" placeholder="例：前年差の要因、増員/減員、クレーム、稼働率、来月の見込みなど"></textarea>
+      <textarea id="memoLong" placeholder="例：前年差の要因、増員/減員、クレーム、稼働率、来月見込みなど"></textarea>
 
       <div class="hr no-print"></div>
-
-      <div class="muted no-print" style="font-size:12px;line-height:1.6">
-        ※本部へは「PDF保存してLINE転送」または「CSVをLINE転送」してください。<br>
-        ※「端末に保存」はこの端末のブラウザに保存されます（バックアップ用途）。
+      <div class="muted no-print">
+        ✅ 送付手順：<b>PDF出力 or CSV出力</b> → <b>LINE（月次報告）</b> → 添付して送信
       </div>
     </div>
 
-    <div class="card" style="margin-top:14px">
-      <h2>印刷サマリー（そのままPDFで提出）</h2>
+    <div class="card">
+      <h2>印刷サマリー（そのままPDF提出）</h2>
       <table>
         <tbody>
           <tr><th style="width:200px">対象月</th><td id="pMonth">—</td></tr>
@@ -267,8 +263,9 @@
   </div>
 
   <script>
+    const LINE_URL = "https://lin.ee/o1TPv8v";
     const RATE = 0.003; // 0.3%
-    const LS_KEY = "ofa_monthly_report_v1";
+    const LS_KEY = "ofa_monthly_report_white_v1";
 
     const PREFS = [
       "北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県",
@@ -333,7 +330,7 @@
 
       el("costSum").textContent = yen(cost);
       el("profitSum").textContent = yen(prof);
-      el("profitSum").className = prof>=0 ? "good" : "bad";
+      el("profitSum").className = (prof>=0) ? "good" : "bad";
       el("profitRate").textContent = pct(pr);
       el("outRate").textContent = pct(or);
 
@@ -402,11 +399,9 @@
     }
 
     function saveLocal(){
-      const data = collect();
-      localStorage.setItem(LS_KEY, JSON.stringify(data));
+      localStorage.setItem(LS_KEY, JSON.stringify(collect()));
       alert("端末に保存しました");
     }
-
     function loadLocal(){
       try{
         const raw = localStorage.getItem(LS_KEY);
@@ -432,7 +427,6 @@
       if(/[",\n]/.test(s)) return `"${s.replace(/"/g,'""')}"`;
       return s;
     }
-
     function downloadText(text, filename, mime){
       const blob = new Blob([text], {type:mime});
       const url = URL.createObjectURL(blob);
@@ -488,7 +482,6 @@
       recalc();
     }
 
-    // ===== LPパラメータから自動入力（拠点LP対応）=====
     function applyParams(){
       const qs = new URLSearchParams(location.search);
       const pPref = qs.get("pref");
@@ -498,12 +491,12 @@
       const pReporter = qs.get("reporter");
       const pMonth = qs.get("month");
 
-      if (pMonth) month.value = pMonth;
-      if (pPref) pref.value = pPref;
-      if (pBase) base.value = pBase;
-      if (pSales) salesOwner.value = pSales;
-      if (pRole) role.value = pRole;
-      if (pReporter) reporter.value = pReporter;
+      if(pMonth) month.value = pMonth;
+      if(pPref) pref.value = pPref;
+      if(pBase) base.value = pBase;
+      if(pSales) salesOwner.value = pSales;
+      if(pRole) role.value = pRole;
+      if(pReporter) reporter.value = pReporter;
 
       recalc();
     }
@@ -521,6 +514,8 @@
     el("btnCSV").addEventListener("click", exportCSV);
     el("btnSave").addEventListener("click", saveLocal);
     el("btnClear").addEventListener("click", clearAll);
+    el("btnLINE").addEventListener("click", ()=>window.open(LINE_URL,"_blank"));
+    el("btnLP").addEventListener("click", ()=>window.open("lp.html","_blank"));
   </script>
 </body>
 </html>
