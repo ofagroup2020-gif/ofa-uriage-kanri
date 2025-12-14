@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>OFA 拠点専用LP</title>
+  <style>
+    :root{--bg:#0b1220;--text:#e9f1ff;--muted:rgba(233,241,255,.72);--card:rgba(255,255,255,.06);--line:rgba(255,255,255,.12);--accent:#ffd400;--shadow:0 12px 28px rgba(0,0,0,.35);--r:18px;}
+    *{box-sizing:border-box}
+    body{
+      margin:0;font-family:system-ui,-apple-system,"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+      background: radial-gradient(1200px 600px at 15% 10%, rgba(255,212,0,.18), transparent 60%),
+                  radial-gradient(900px 500px at 85% 25%, rgba(25,195,125,.12), transparent 55%),
+                  radial-gradient(900px 500px at 65% 95%, rgba(52,152,219,.16), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+    }
+    .wrap{max-width:980px;margin:0 auto;padding:18px 14px 70px}
+    .card{background:linear-gradient(180deg,var(--card),rgba(255,255,255,.03));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px}
+    .top{display:flex;gap:12px;align-items:center}
+    .logo{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg, rgba(255,212,0,.95), rgba(255,120,0,.95));display:grid;place-items:center;font-weight:900;color:#111}
+    h1{margin:0;font-size:16px;line-height:1.2}
+    .sub{margin-top:4px;font-size:12px;color:var(--muted)}
+    .grid{display:grid;gap:14px;margin-top:14px}
+    @media(min-width:900px){.grid{grid-template-columns:1.1fr .9fr}}
+    .pill{display:inline-block;margin:6px 8px 0 0;padding:8px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.06);font-size:12px;color:var(--muted)}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    a.btn{display:inline-flex;gap:8px;align-items:center;justify-content:center;padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.08);color:var(--text);text-decoration:none;font-weight:900}
+    a.btn:hover{filter:brightness(1.06)}
+    .btn.accent{background:rgba(255,212,0,.16);border-color:rgba(255,212,0,.22)}
+    .muted{color:var(--muted);font-size:12px;line-height:1.6}
+    .qrbox{display:grid;place-items:center;padding:14px;border-radius:16px;border:1px dashed rgba(255,255,255,.22);background:rgba(0,0,0,.18)}
+    #qrcode{background:#fff;padding:10px;border-radius:12px}
+    code{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);padding:2px 6px;border-radius:8px}
+    .small{font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="top">
+        <div class="logo">OFA</div>
+        <div>
+          <h1 id="title">拠点専用 月次報告</h1>
+          <div class="sub">QRで開く → 入力 → PDF/CSV出力 → LINEで本部へ転送</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card" style="box-shadow:none">
+          <div class="pill">都道府県：<b id="prefLabel">—</b></div>
+          <div class="pill">拠点名：<b id="baseLabel">—</b></div>
+          <div class="pill">担当営業：<b id="salesLabel">—</b></div>
+
+          <div class="btns">
+            <a class="btn accent" id="openForm" href="#">📝 月次入力を開く</a>
+            <a class="btn" id="openViewer" href="#">📊 本部確認（CSV取込）</a>
+          </div>
+
+          <div class="muted" style="margin-top:12px">
+            <b>使い方</b><br>
+            ①「月次入力を開く」でフォームが<b>拠点情報が埋まった状態</b>で開きます。<br>
+            ②入力後、<b>PDF保存</b> or <b>CSV出力</b>して、LINEで本部へ転送してください。<br>
+            ③本部は「本部確認（CSV取込）」で、LINEで届いたCSVを取り込んで拠点別に見れます。
+          </div>
+        </div>
+
+        <div class="card" style="box-shadow:none">
+          <h1 class="small" style="margin:0 0 10px">この拠点LPのQR</h1>
+          <div class="qrbox">
+            <div id="qrcode"></div>
+            <div class="muted" style="margin-top:10px;text-align:center">※このページURLをQR化しています</div>
+          </div>
+          <div class="muted" style="margin-top:10px">URL：<code id="urlText"></code></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    const qs = new URLSearchParams(location.search);
+    const pref = qs.get("pref") || "未設定";
+    const base = qs.get("base") || "未設定";
+    const sales = qs.get("sales") || "";
+
+    document.getElementById("title").textContent = `拠点専用 月次報告：${base}`;
+    document.getElementById("prefLabel").textContent = pref;
+    document.getElementById("baseLabel").textContent = base;
+    document.getElementById("salesLabel").textContent = sales || "（任意）";
+
+    // LP→フォーム（自動入力）
+    const formUrl = `index.html?pref=${encodeURIComponent(pref)}&base=${encodeURIComponent(base)}&sales=${encodeURIComponent(sales)}&role=${encodeURIComponent("エリアマネ")}`;
+    document.getElementById("openForm").href = formUrl;
+
+    // 本部ビュー（拠点フィルタ入り）
+    const viewerUrl = `viewer.html?pref=${encodeURIComponent(pref)}&base=${encodeURIComponent(base)}`;
+    document.getElementById("openViewer").href = viewerUrl;
+
+    // QRは「このLPのURL」
+    const full = location.href;
+    document.getElementById("urlText").textContent = full;
+
+    new QRCode(document.getElementById("qrcode"), { text: full, width: 220, height: 220 });
+  </script>
+</body>
+</html>
