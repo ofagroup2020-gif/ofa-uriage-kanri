@@ -3,39 +3,88 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>OFA 本部ビュー（CSV取込）</title>
+  <title>OFA 本部ビュー（比較・アラート）</title>
+
   <style>
-    :root{--bg:#0b1220;--text:#e9f1ff;--muted:rgba(233,241,255,.72);--line:rgba(255,255,255,.12);--card:rgba(255,255,255,.06);--shadow:0 12px 28px rgba(0,0,0,.35);--r:18px;}
+    :root{
+      --bg:#ffffff;--card:#ffffff;--border:#dddddd;--text:#111111;--muted:#666666;
+      --yellow:#FFD400;--black:#111111;--red:#E60012;--green:#0FA958;--blue:#0066CC;
+      --radius:12px;
+    }
     *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;background:var(--bg);color:var(--text)}
-    .wrap{max-width:1200px;margin:0 auto;padding:18px 14px 100px}
-    .card{background:linear-gradient(180deg,var(--card),rgba(255,255,255,.03));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:14px}
-    h1{margin:0;font-size:16px}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1280px;margin:0 auto;padding:16px 14px 110px}
+    .topbar{
+      background:#fff;border-bottom:2px solid var(--black);
+      padding:12px 10px;margin:-16px -14px 14px;
+      display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap
+    }
+    .brand{display:flex;gap:10px;align-items:center}
+    .logo{width:44px;height:44px;border-radius:12px;background:var(--yellow);border:2px solid var(--black);display:grid;place-items:center;font-weight:900;color:#000}
+    .brand h1{margin:0;font-size:16px;font-weight:900}
+    .brand .sub{margin-top:2px;color:var(--muted);font-size:12px;font-weight:700}
+
+    .card{background:var(--card);border:2px solid var(--black);border-radius:var(--radius);padding:14px;margin-bottom:14px}
     .muted{color:var(--muted);font-size:12px;line-height:1.6}
-    .drop{margin-top:12px;padding:18px;border-radius:16px;border:1px dashed rgba(255,255,255,.25);background:rgba(0,0,0,.18);text-align:center}
-    .row{display:grid;gap:10px;margin-top:12px}
-    @media(min-width:900px){.row{grid-template-columns:1fr 1fr 1fr 1fr}}
-    label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}
-    input{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.25);color:var(--text)}
-    table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);margin-top:12px}
-    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.08);font-size:12.5px}
-    th{color:var(--muted);text-align:left;background:rgba(255,255,255,.04);font-weight:900}
-    tr:last-child td{border-bottom:none}
-    .right{text-align:right}
-    .good{color:#19c37d;font-weight:900}
-    .bad{color:#ff5c5c;font-weight:900}
-    .pill{display:inline-block;margin:6px 8px 0 0;padding:8px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.06);font-size:12px;color:var(--muted)}
-    button{border:0;cursor:pointer;padding:10px 12px;border-radius:12px;color:var(--text);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.10);font-weight:900}
-    button:hover{filter:brightness(1.06)}
+
+    .btn{
+      padding:10px 14px;border-radius:10px;border:2px solid var(--black);
+      background:#f5f5f5;font-weight:900;cursor:pointer;
+    }
+    .btn:hover{opacity:.9}
+    .btn-yellow{background:var(--yellow);color:#000}
+    .btn-blue{background:var(--blue);color:#fff;border-color:#003e7a}
+    .btn-red{background:var(--red);color:#fff;border-color:#8f000b}
+
+    .row{display:grid;gap:10px;margin-top:10px}
+    @media(min-width:980px){.row.cols5{grid-template-columns:1.1fr 1fr 1fr 1fr 1fr}}
+    label{display:block;font-size:12px;font-weight:900;margin:0 0 4px}
+    input{width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);font-size:14px}
+
+    .pill{display:inline-flex;gap:8px;align-items:center;padding:8px 10px;border-radius:999px;border:1px solid var(--border);background:#fafafa;font-size:12px;font-weight:900}
+    .good{color:var(--green);font-weight:900}
+    .bad{color:var(--red);font-weight:900}
+    .warn{color:var(--blue);font-weight:900}
+
+    .badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:900;border:1px solid var(--border)}
+    .badge-ok{background:#e7f6ef;color:var(--green);border-color:#bde6d1}
+    .badge-warn{background:#eaf2fb;color:var(--blue);border-color:#c7dcf6}
+    .badge-bad{background:#fdeaea;color:var(--red);border-color:#f6c7c7}
+
+    .drop{
+      margin-top:10px;padding:14px;border-radius:12px;
+      border:2px dashed #999;background:#fff;text-align:center
+    }
+
+    .tableWrap{overflow:auto;max-height:70vh;border:1px solid var(--border);border-radius:12px}
+    table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
+    th,td{border:1px solid var(--border);padding:8px;white-space:nowrap}
+    th{background:#f2f2f2;font-weight:900;position:sticky;top:0}
+    td.right{text-align:right}
   </style>
 </head>
+
 <body>
   <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">OFA</div>
+        <div>
+          <h1>本部ビュー（前月比・前年差・異常アラート）</h1>
+          <div class="sub">CSV複数取込 → 自動比較 → 異常を赤で表示</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a class="btn btn-yellow" href="lp.html" target="_blank" style="text-decoration:none;color:#000;display:inline-flex;align-items:center">🗾 拠点一覧</a>
+        <a class="btn btn-blue" href="index.html" target="_blank" style="text-decoration:none;color:#fff;display:inline-flex;align-items:center">📝 月次入力</a>
+        <button class="btn btn-red" id="btnClear">🧹 取込クリア</button>
+      </div>
+    </div>
+
     <div class="card">
-      <h1>本部ビュー（CSV取込 → 拠点別に一覧）</h1>
       <div class="muted">
-        LINEで届いたCSV（OFA_月次報告_*.csv）を、ここにドラッグ&ドロップしてください（複数OK）。<br>
-        ※この画面は「アップロード」ではなく、ブラウザ内で読むだけです。
+        LINEで届いたCSV（OFA_月次報告_*.csv）をドラッグ&ドロップ（複数OK）。<br>
+        表示月が空欄なら、取り込んだ中で一番新しい月を自動採用します。
       </div>
 
       <div id="drop" class="drop">
@@ -44,46 +93,60 @@
         ）
       </div>
 
-      <div class="row">
+      <div class="row cols5">
         <div>
-          <label>絞り込み：対象月（month）</label>
-          <input id="fMonth" placeholder="例：2025-12（空欄=全て）">
+          <label>表示月（month）</label>
+          <input id="fMonth" placeholder="例：2025-12（空欄=最新）">
         </div>
         <div>
-          <label>絞り込み：都道府県（pref）</label>
+          <label>都道府県（pref）</label>
           <input id="fPref" placeholder="例：福岡県（空欄=全て）">
         </div>
         <div>
-          <label>絞り込み：拠点/店舗名（base）</label>
+          <label>拠点/店舗名（base）</label>
           <input id="fBase" placeholder="例：OFA福岡南（空欄=全て）">
         </div>
-        <div style="display:flex;gap:10px;align-items:flex-end">
-          <button id="btnClear">🧹 取込データをクリア</button>
+        <div>
+          <label>利益率 下限（%）</label>
+          <input id="thProfit" inputmode="decimal" placeholder="例：8">
+        </div>
+        <div>
+          <label>外注率 上限（%）</label>
+          <input id="thOut" inputmode="decimal" placeholder="例：85">
         </div>
       </div>
 
-      <div style="margin-top:10px">
+      <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
         <span class="pill">件数：<b id="cnt">0</b></span>
         <span class="pill">売上合計：<b id="sumRev">0</b></span>
         <span class="pill">利益合計：<b id="sumProf">0</b></span>
+        <span class="pill">異常件数：<b id="abn">0</b></span>
       </div>
 
-      <div style="overflow:auto">
+      <div class="tableWrap" style="margin-top:10px">
         <table id="tbl">
           <thead>
             <tr>
+              <th>判定</th>
               <th>month</th>
               <th>pref</th>
               <th>base</th>
+              <th class="right">売上</th>
+              <th class="right">利益</th>
+              <th class="right">利益率</th>
+              <th class="right">外注率</th>
+
+              <th class="right">前月 売上差</th>
+              <th class="right">前月 利益差</th>
+              <th class="right">前月 利益率差(pt)</th>
+
+              <th class="right">前年差 売上差</th>
+              <th class="right">前年差 利益差</th>
+              <th class="right">前年差 利益率差(pt)</th>
+
               <th>role</th>
               <th>reporter</th>
               <th>salesOwner</th>
-              <th class="right">revenue</th>
-              <th class="right">profit</th>
-              <th class="right">profitRate</th>
-              <th class="right">outsourceRate</th>
-              <th class="right">allowMgr</th>
-              <th class="right">allowSales</th>
               <th>memoShort</th>
             </tr>
           </thead>
@@ -91,46 +154,37 @@
         </table>
       </div>
 
+      <div class="muted" style="margin-top:10px">
+        ※利益率差(pt)：8%→6%なら「-2.0pt」<br>
+        ※異常＝利益率が下限未満（赤） / 注意＝外注率が上限超（青）
+      </div>
     </div>
   </div>
 
   <script>
+    let rows = [];
+
     const yen = n => (Number(n)||0).toLocaleString("ja-JP");
     const pct = v => (Number(v||0)*100).toFixed(1) + "%";
-
-    let rows = []; // 取り込んだデータ（複数CSV）
 
     const qs = new URLSearchParams(location.search);
     const initialPref = qs.get("pref") || "";
     const initialBase = qs.get("base") || "";
 
     const fMonth = document.getElementById("fMonth");
-    const fPref = document.getElementById("fPref");
-    const fBase = document.getElementById("fBase");
+    const fPref  = document.getElementById("fPref");
+    const fBase  = document.getElementById("fBase");
+    const thProfit = document.getElementById("thProfit");
+    const thOut    = document.getElementById("thOut");
 
     if(initialPref) fPref.value = initialPref;
     if(initialBase) fBase.value = initialBase;
 
+    thProfit.value = "8";
+    thOut.value = "85";
+
     const drop = document.getElementById("drop");
     const file = document.getElementById("file");
-
-    function parseCSV(text){
-      // シンプルCSV（このシステムの1行CSV前提）
-      const lines = text.replace(/\r/g,"").split("\n").filter(l=>l.trim().length);
-      if(lines.length < 2) return [];
-      const header = splitCSVLine(lines[0]);
-      const dataLine = splitCSVLine(lines[1]);
-      const obj = {};
-      header.forEach((h,i)=>obj[h] = dataLine[i] ?? "");
-      // 数値っぽいのは数値化
-      ["revenue","outsource","otherCost","cost","profit","profitRate","outsourceRate","allowMgr","allowSales"].forEach(k=>{
-        if(obj[k] !== undefined){
-          const n = Number(String(obj[k]).replace(/[^\d.-]/g,""));
-          obj[k] = Number.isFinite(n) ? n : 0;
-        }
-      });
-      return [obj];
-    }
 
     function splitCSVLine(line){
       const out = [];
@@ -152,10 +206,80 @@
       return out;
     }
 
+    function parseCSV(text){
+      const lines = text.replace(/\r/g,"").split("\n").filter(l=>l.trim().length);
+      if(lines.length < 2) return [];
+      const header = splitCSVLine(lines[0]);
+      const dataLine = splitCSVLine(lines[1]);
+      const obj = {};
+      header.forEach((h,i)=>obj[h] = dataLine[i] ?? "");
+
+      ["revenue","outsource","otherCost","cost","profit","profitRate","outsourceRate","allowMgr","allowSales"].forEach(k=>{
+        if(obj[k] !== undefined){
+          const n = Number(String(obj[k]).replace(/[^\d.-]/g,""));
+          obj[k] = Number.isFinite(n) ? n : 0;
+        }
+      });
+      return [obj];
+    }
+
+    function monthAdd(monthStr, diff){
+      const [y,m] = monthStr.split("-").map(Number);
+      const d = new Date(y, (m-1) + diff, 1);
+      const yy = d.getFullYear();
+      const mm = String(d.getMonth()+1).padStart(2,"0");
+      return `${yy}-${mm}`;
+    }
+
+    function keyOf(r){
+      return `${String(r.pref||"")}|${String(r.base||"")}`;
+    }
+
+    function findLatestMonth(list){
+      const months = [...new Set(list.map(r=>String(r.month||"")).filter(Boolean))].sort();
+      return months.length ? months[months.length-1] : "";
+    }
+
+    function pickIndex(list){
+      const idx = new Map();
+      list.forEach(r=>{
+        const k = `${keyOf(r)}|${String(r.month||"")}`;
+        idx.set(k, r);
+      });
+      return idx;
+    }
+
+    function badgeHTML(status){
+      if(status === "異常") return `<span class="badge badge-bad">異常</span>`;
+      if(status === "注意") return `<span class="badge badge-warn">注意</span>`;
+      return `<span class="badge badge-ok">OK</span>`;
+    }
+
+    function fmtDiff(v){
+      if(v === null || v === undefined) return "—";
+      const n = Number(v||0);
+      const s = (n>0?"+":"") + yen(n);
+      return n>=0 ? `<span class="good">${s}</span>` : `<span class="bad">${s}</span>`;
+    }
+    function fmtPt(v){
+      if(v === null || v === undefined) return "—";
+      const n = Number(v||0);
+      const s = (n>0?"+":"") + n.toFixed(1) + "pt";
+      return n>=0 ? `<span class="good">${s}</span>` : `<span class="bad">${s}</span>`;
+    }
+    function esc(s){
+      return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
     function render(){
-      const m = fMonth.value.trim();
       const p = fPref.value.trim();
       const b = fBase.value.trim();
+
+      let m = fMonth.value.trim();
+      if(!m) m = findLatestMonth(rows);
+
+      const profitTh = Number(String(thProfit.value||"").replace(/[^\d.-]/g,"")) / 100;
+      const outTh    = Number(String(thOut.value||"").replace(/[^\d.-]/g,"")) / 100;
 
       const list = rows.filter(r=>{
         if(m && String(r.month||"") !== m) return false;
@@ -164,28 +288,65 @@
         return true;
       });
 
+      const idx = pickIndex(rows);
+      const prevM = m ? monthAdd(m, -1) : "";
+      const yoyM  = m ? monthAdd(m, -12) : "";
+
       const tbody = document.querySelector("#tbl tbody");
       tbody.innerHTML = "";
 
-      let sumRev = 0, sumProf = 0;
+      let sumRev = 0, sumProf = 0, abn = 0;
 
       list.forEach(r=>{
-        sumRev += Number(r.revenue||0);
-        sumProf += Number(r.profit||0);
+        const k = keyOf(r);
+        const prev = prevM ? idx.get(`${k}|${prevM}`) : null;
+        const yoy  = yoyM  ? idx.get(`${k}|${yoyM}`)  : null;
+
+        const rev = Number(r.revenue||0);
+        const prof = Number(r.profit||0);
+        const pr = Number(r.profitRate||0);
+        const or = Number(r.outsourceRate||0);
+
+        sumRev += rev;
+        sumProf += prof;
+
+        const dPrevRev = prev ? rev - Number(prev.revenue||0) : null;
+        const dPrevProf = prev ? prof - Number(prev.profit||0) : null;
+        const dPrevPRpt = prev ? (pr - Number(prev.profitRate||0))*100 : null;
+
+        const dYoyRev = yoy ? rev - Number(yoy.revenue||0) : null;
+        const dYoyProf = yoy ? prof - Number(yoy.profit||0) : null;
+        const dYoyPRpt = yoy ? (pr - Number(yoy.profitRate||0))*100 : null;
+
+        let status = "OK";
+        if(Number.isFinite(profitTh) && profitTh > 0 && pr < profitTh) status = "異常";
+        else if(Number.isFinite(outTh) && outTh > 0 && or > outTh) status = "注意";
+
+        if(status !== "OK") abn++;
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
+          <td>${badgeHTML(status)}</td>
           <td>${esc(r.month)}</td>
           <td>${esc(r.pref)}</td>
           <td>${esc(r.base)}</td>
+
+          <td class="right">${yen(rev)}</td>
+          <td class="right ${prof>=0?'good':'bad'}">${yen(prof)}</td>
+          <td class="right ${pr < profitTh ? 'bad' : ''}">${pct(pr)}</td>
+          <td class="right ${or > outTh ? 'warn' : ''}">${pct(or)}</td>
+
+          <td class="right">${fmtDiff(dPrevRev)}</td>
+          <td class="right">${fmtDiff(dPrevProf)}</td>
+          <td class="right">${fmtPt(dPrevPRpt)}</td>
+
+          <td class="right">${fmtDiff(dYoyRev)}</td>
+          <td class="right">${fmtDiff(dYoyProf)}</td>
+          <td class="right">${fmtPt(dYoyPRpt)}</td>
+
           <td>${esc(r.role)}</td>
           <td>${esc(r.reporter)}</td>
           <td>${esc(r.salesOwner)}</td>
-          <td class="right">${yen(r.revenue)}</td>
-          <td class="right ${r.profit>=0?'good':'bad'}">${yen(r.profit)}</td>
-          <td class="right">${pct(r.profitRate)}</td>
-          <td class="right">${pct(r.outsourceRate)}</td>
-          <td class="right">${yen(r.allowMgr)}</td>
-          <td class="right">${yen(r.allowSales)}</td>
           <td>${esc(r.memoShort)}</td>
         `;
         tbody.appendChild(tr);
@@ -194,25 +355,23 @@
       document.getElementById("cnt").textContent = list.length;
       document.getElementById("sumRev").textContent = yen(sumRev);
       document.getElementById("sumProf").textContent = yen(sumProf);
-    }
+      document.getElementById("abn").textContent = abn;
 
-    function esc(s){
-      return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+      if(!fMonth.value.trim() && m) fMonth.value = m;
     }
 
     async function handleFiles(files){
       for(const f of files){
         const text = await f.text();
-        const parsed = parseCSV(text);
-        rows.push(...parsed);
+        rows.push(...parseCSV(text));
       }
       render();
     }
 
-    drop.addEventListener("dragover", (e)=>{ e.preventDefault(); drop.style.filter="brightness(1.08)"; });
-    drop.addEventListener("dragleave", ()=>{ drop.style.filter=""; });
+    drop.addEventListener("dragover", (e)=>{ e.preventDefault(); drop.style.opacity="0.9"; });
+    drop.addEventListener("dragleave", ()=>{ drop.style.opacity="1"; });
     drop.addEventListener("drop", (e)=>{
-      e.preventDefault(); drop.style.filter="";
+      e.preventDefault(); drop.style.opacity="1";
       const files = e.dataTransfer.files;
       if(files && files.length) handleFiles(files);
     });
@@ -222,11 +381,12 @@
       file.value = "";
     });
 
-    [fMonth,fPref,fBase].forEach(x=>x.addEventListener("input", render));
+    [fMonth,fPref,fBase,thProfit,thOut].forEach(x=>x.addEventListener("input", render));
 
     document.getElementById("btnClear").addEventListener("click", ()=>{
       if(!confirm("取り込んだデータをクリアしますか？")) return;
       rows = [];
+      fMonth.value = "";
       render();
     });
 
