@@ -3,37 +3,36 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>OFA 売上管理フォーム（都道府県別 集計・PDF印刷）</title>
+  <title>OFA 月次報告フォーム（PDF/CSV）</title>
 
   <style>
     :root{
       --bg:#0b1220;
       --card:#111b2f;
-      --card2:#0f1a2d;
       --line:rgba(255,255,255,.12);
       --text:#e9f1ff;
       --muted:rgba(233,241,255,.70);
       --accent:#ffd400;
       --ok:#19c37d;
       --bad:#ff5c5c;
-      --chip:rgba(255,255,255,.08);
       --shadow:0 12px 28px rgba(0,0,0,.35);
       --radius:18px;
     }
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: system-ui, -apple-system, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      font-family: system-ui,-apple-system,"Noto Sans JP","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
       background: radial-gradient(1200px 600px at 15% 10%, rgba(255,212,0,.18), transparent 60%),
                   radial-gradient(900px 500px at 85% 25%, rgba(25,195,125,.12), transparent 55%),
                   radial-gradient(900px 500px at 65% 95%, rgba(52,152,219,.16), transparent 55%),
                   var(--bg);
       color:var(--text);
     }
-    .wrap{max-width:1180px;margin:0 auto;padding:18px 14px 120px}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px 14px 120px}
     .topbar{
+      position:sticky;top:0;z-index:50;
       display:flex;gap:12px;align-items:center;justify-content:space-between;
-      position:sticky;top:0;z-index:50;padding:14px 10px;margin:-18px -14px 16px;
+      padding:14px 10px;margin:-18px -14px 16px;
       backdrop-filter: blur(10px);
       background: linear-gradient(to bottom, rgba(11,18,32,.85), rgba(11,18,32,.35));
       border-bottom:1px solid rgba(255,255,255,.08);
@@ -43,10 +42,9 @@
       width:44px;height:44px;border-radius:14px;
       background: linear-gradient(135deg, rgba(255,212,0,.95), rgba(255,120,0,.95));
       box-shadow:0 12px 20px rgba(255,212,0,.16);
-      display:grid;place-items:center;font-weight:900;color:#111;
-      letter-spacing:.04em;
+      display:grid;place-items:center;font-weight:900;color:#111;letter-spacing:.04em;
     }
-    .brand h1{font-size:16px;margin:0;line-height:1.1}
+    .brand h1{font-size:16px;margin:0;line-height:1.15}
     .brand .sub{font-size:12px;color:var(--muted);margin-top:2px}
     .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
     button,.btn{
@@ -57,24 +55,12 @@
       border:1px solid rgba(255,255,255,.10);
       box-shadow: 0 10px 18px rgba(0,0,0,.20);
       display:inline-flex;gap:8px;align-items:center;justify-content:center;
-      font-weight:700;
+      font-weight:800;
     }
     button:hover,.btn:hover{filter:brightness(1.06)}
     .btn-accent{background:rgba(255,212,0,.16);border-color:rgba(255,212,0,.22)}
     .btn-ok{background:rgba(25,195,125,.14);border-color:rgba(25,195,125,.22)}
     .btn-bad{background:rgba(255,92,92,.14);border-color:rgba(255,92,92,.22)}
-    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}
-    .tab{
-      padding:10px 12px;border-radius:999px;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      color:var(--muted);font-weight:800;
-    }
-    .tab.active{color:var(--text);background:rgba(255,212,0,.12);border-color:rgba(255,212,0,.22)}
-    .grid{display:grid;gap:14px}
-    @media(min-width:980px){
-      .grid{grid-template-columns: 1.15fr .85fr}
-    }
     .card{
       background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       border:1px solid rgba(255,255,255,.10);
@@ -82,7 +68,7 @@
       box-shadow:var(--shadow);
       padding:14px;
     }
-    .card h2{margin:0 0 10px;font-size:14px}
+    h2{margin:0 0 10px;font-size:14px}
     .muted{color:var(--muted)}
     .row{display:grid;gap:10px}
     @media(min-width:720px){
@@ -101,15 +87,7 @@
       outline:none;
       font-size:14px;
     }
-    textarea{min-height:80px;resize:vertical}
-    .inline{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-    .chips{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{
-      padding:8px 10px;border-radius:999px;background:var(--chip);
-      border:1px solid rgba(255,255,255,.10);
-      font-size:12px;color:var(--muted);
-    }
-    .chip b{color:var(--text)}
+    textarea{min-height:90px;resize:vertical}
     table{
       width:100%;
       border-collapse:separate;
@@ -120,10 +98,9 @@
       background:rgba(0,0,0,.18);
     }
     th,td{padding:10px 10px;border-bottom:1px solid rgba(255,255,255,.08);font-size:12.5px}
-    th{color:var(--muted);text-align:left;background:rgba(255,255,255,.04);font-weight:800}
+    th{color:var(--muted);text-align:left;background:rgba(255,255,255,.04);font-weight:900}
     tr:last-child td{border-bottom:none}
     .right{text-align:right}
-    .small{font-size:12px}
     .hr{height:1px;background:rgba(255,255,255,.10);margin:12px 0}
     .pill{
       padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);
@@ -131,23 +108,20 @@
     }
     .good{color:var(--ok);font-weight:900}
     .bad{color:var(--bad);font-weight:900}
-    .hide{display:none !important}
 
-    /* ===== 印刷(PDF)用 ===== */
+    /* 印刷(PDF)用 */
     @media print{
       body{background:#fff;color:#000}
-      .topbar,.tabs,.no-print{display:none !important}
+      .topbar,.no-print{display:none !important}
       .wrap{max-width:none;padding:0}
       .card{box-shadow:none;border:1px solid #ccc;background:#fff}
       table{border:1px solid #999;background:#fff}
       th{background:#f3f3f3;color:#111}
       td,th{border-bottom:1px solid #ddd;color:#111}
-      .chip,.pill{border:1px solid #ccc;background:#f7f7f7;color:#111}
       .muted{color:#333}
+      .pill{border:1px solid #ccc;background:#f7f7f7;color:#111}
       .good{color:#0a7d4f}
       .bad{color:#b80000}
-      a{color:#000;text-decoration:none}
-      .pagebreak{page-break-before:always}
     }
   </style>
 </head>
@@ -155,359 +129,147 @@
 <body>
   <div class="wrap">
 
-    <div class="topbar">
+    <div class="topbar no-print">
       <div class="brand">
         <div class="logo">OFA</div>
         <div>
-          <h1>売上管理フォーム（都道府県別 集計・PDF印刷）</h1>
-          <div class="sub">売上入力 → 請求入力 → 利益/手当(0.3%+0.3%) 自動計算 → 印刷PDF</div>
+          <h1>月次報告フォーム（PDF / CSV出力）</h1>
+          <div class="sub">拠点LPから開く → 入力 → PDF/CSV → LINEで本部へ転送</div>
         </div>
       </div>
 
-      <div class="actions no-print">
-        <button class="btn-accent" id="btnPrint">🖨️ PDF印刷</button>
+      <div class="actions">
+        <button class="btn-accent" id="btnPDF">🖨️ PDF出力</button>
         <button class="btn" id="btnCSV">⬇️ CSV出力</button>
-        <button class="btn" id="btnBackup">💾 バックアップ(JSON)</button>
-        <label class="btn" for="jsonImport" style="cursor:pointer">⬆️ 復元(JSON)</label>
-        <input id="jsonImport" type="file" accept="application/json" class="hide" />
-        <button class="btn-bad" id="btnReset">🧹 全データ削除</button>
+        <button class="btn-ok" id="btnSave">💾 端末に保存</button>
+        <button class="btn-bad" id="btnClear">🧹 入力クリア</button>
       </div>
     </div>
 
-    <div class="tabs no-print">
-      <div class="tab active" data-tab="entry">① 売上入力</div>
-      <div class="tab" data-tab="masters">② マスター設定</div>
-      <div class="tab" data-tab="report">③ 集計・印刷</div>
+    <div class="card">
+      <h2>① 基本情報</h2>
+      <div class="row cols4">
+        <div>
+          <label>対象月</label>
+          <input type="month" id="month">
+        </div>
+        <div>
+          <label>入力者区分</label>
+          <select id="role">
+            <option value="エリアマネ">エリアマネ（現地責任者）</option>
+            <option value="営業マン">営業マン（本部/FC管理）</option>
+            <option value="フランチャイズ">フランチャイズ</option>
+          </select>
+        </div>
+        <div>
+          <label>入力者名</label>
+          <input type="text" id="reporter" placeholder="例：田中 / ○○FC店 など">
+        </div>
+        <div>
+          <label>担当営業（任意）</label>
+          <select id="salesOwner">
+            <option value="">未指定</option>
+            <option value="森下">森下</option><option value="太田">太田</option><option value="松岡">松岡</option>
+            <option value="島田">島田</option><option value="日高">日高</option><option value="内山">内山</option>
+            <option value="林">林</option><option value="屋宮">屋宮</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row cols3" style="margin-top:10px">
+        <div>
+          <label>都道府県</label>
+          <select id="pref"></select>
+        </div>
+        <div>
+          <label>拠点名 / 店舗名（任意）</label>
+          <input type="text" id="base" placeholder="例：福岡南拠点 / ○○FC店">
+        </div>
+        <div>
+          <label>メモ（任意）</label>
+          <input type="text" id="memoShort" placeholder="例：今月は増員 / 台数増">
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <h2>② 月次数値（入力だけ）</h2>
+      <div class="row cols3">
+        <div>
+          <label>売上合計（円）</label>
+          <input type="text" id="revenue" inputmode="numeric" placeholder="例：2500000">
+        </div>
+        <div>
+          <label>委託会社請求合計（円）</label>
+          <input type="text" id="outsource" inputmode="numeric" placeholder="例：1800000">
+        </div>
+        <div>
+          <label>その他経費（円）</label>
+          <input type="text" id="otherCost" inputmode="numeric" placeholder="例：高速/外注追加/修理など">
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>委託内訳（任意・自由記入）</label>
+          <textarea id="outsourceMemo" placeholder="例：ヤマト 1,200,000円 / 佐川 600,000円 など"></textarea>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <h2>③ 自動計算（確認用）</h2>
+      <div class="row cols4">
+        <div class="pill">コスト合計：<b id="costSum">0</b> 円</div>
+        <div class="pill">利益：<b id="profitSum">0</b> 円</div>
+        <div class="pill">利益率：<b id="profitRate">0.0%</b></div>
+        <div class="pill">外注率：<b id="outRate">0.0%</b></div>
+      </div>
+
+      <div class="hr"></div>
+
+      <h2>④ 手当（0.3%）</h2>
+      <div class="row cols3">
+        <div class="pill">エリアマネ手当（売上×0.3%）：<b id="allowMgr">0</b> 円</div>
+        <div class="pill">営業手当（売上×0.3%）：<b id="allowSales">0</b> 円</div>
+        <div class="pill">手当合計：<b id="allowAll">0</b> 円</div>
+      </div>
+
+      <div class="hr"></div>
+
+      <h2>⑤ 長文メモ（任意）</h2>
+      <textarea id="memoLong" placeholder="例：前年差の要因、増員/減員、クレーム、稼働率、来月の見込みなど"></textarea>
+
+      <div class="hr no-print"></div>
+
+      <div class="muted no-print" style="font-size:12px;line-height:1.6">
+        ※本部へは「PDF保存してLINE転送」または「CSVをLINE転送」してください。<br>
+        ※「端末に保存」はこの端末のブラウザに保存されます（バックアップ用途）。
+      </div>
     </div>
 
-    <!-- ===== ① 売上入力 ===== -->
-    <section id="tab-entry">
-      <div class="grid">
-        <div class="card">
-          <h2>売上入力（営業マンがここだけ触ればOK）</h2>
-
-          <div class="row cols4">
-            <div>
-              <label>日付</label>
-              <input type="date" id="fDate">
-            </div>
-            <div>
-              <label>都道府県</label>
-              <select id="fPref"></select>
-            </div>
-            <div>
-              <label>営業マン（入力者）</label>
-              <input type="text" id="fSales" placeholder="例：森下 / 太田 / 松岡 など">
-            </div>
-            <div>
-              <label>案件名（任意）</label>
-              <input type="text" id="fProject" placeholder="例：アパレル配送 / Amazon / ルート便など">
-            </div>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="row cols3">
-            <div>
-              <label>売上（円）</label>
-              <input type="text" inputmode="numeric" id="fRevenue" placeholder="例：1200000">
-            </div>
-            <div>
-              <label>委託会社①（会社名）</label>
-              <input type="text" id="fVendor1Name" placeholder="例：ヤマト運輸 / 佐川急便 / Amazon 等">
-            </div>
-            <div>
-              <label>委託会社① 請求金額（円）</label>
-              <input type="text" inputmode="numeric" id="fVendor1Amt" placeholder="例：800000">
-            </div>
-          </div>
-
-          <div class="row cols3">
-            <div>
-              <label>委託会社②（会社名）</label>
-              <input type="text" id="fVendor2Name" placeholder="任意">
-            </div>
-            <div>
-              <label>委託会社② 請求金額（円）</label>
-              <input type="text" inputmode="numeric" id="fVendor2Amt" placeholder="任意">
-            </div>
-            <div>
-              <label>その他経費（任意・円）</label>
-              <input type="text" inputmode="numeric" id="fOtherCost" placeholder="例：高速代/外注/修理など">
-            </div>
-          </div>
-
-          <div class="row">
-            <div>
-              <label>メモ（任意）</label>
-              <textarea id="fMemo" placeholder="補足メモ（任意）"></textarea>
-            </div>
-          </div>
-
-          <div class="inline">
-            <button class="btn-ok" id="btnAdd">➕ 追加して保存</button>
-            <span class="pill">エリアマネ手当：<b>0.3%</b>（都道府県売上に対して）</span>
-            <span class="pill">営業手当：<b>0.3%</b>（各入力売上に対して）</span>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="chips">
-            <div class="chip">自動計算：<b>利益 = 売上 - (委託請求合計 + その他経費)</b></div>
-            <div class="chip">手当：<b>営業0.3% / エリアマネ0.3%</b></div>
-            <div class="chip">保存：<b>端末内(LocalStorage)</b>（CSV/JSONで外部保存推奨）</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>直近の入力（編集・削除）</h2>
-          <div class="muted small">※各担当が計算できなくても、ここは自動で数字が出ます。</div>
-          <div class="hr"></div>
-
-          <div class="inline no-print">
-            <button class="btn" id="btnSortNew">🕒 新しい順</button>
-            <button class="btn" id="btnSortOld">🕒 古い順</button>
-            <button class="btn" id="btnSelectAll">✅ 全選択</button>
-            <button class="btn" id="btnClearSelect">❎ 選択解除</button>
-            <button class="btn-bad" id="btnDeleteSelected">🗑️ 選択削除</button>
-          </div>
-
-          <div class="hr"></div>
-
-          <div style="overflow:auto;max-height:520px">
-            <table id="tblRecent">
-              <thead>
-                <tr>
-                  <th class="no-print">選択</th>
-                  <th>日付</th>
-                  <th>都道府県</th>
-                  <th>営業</th>
-                  <th class="right">売上</th>
-                  <th class="right">請求+経費</th>
-                  <th class="right">利益</th>
-                  <th class="right">営業0.3%</th>
-                  <th>操作</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== ② マスター設定 ===== -->
-    <section id="tab-masters" class="hide">
-      <div class="grid">
-        <div class="card">
-          <h2>都道府県マスター（エリアマネ設定）</h2>
-          <div class="muted small">都道府県ごとに責任者（エリアマネージャー）を設定します。手当は集計時に自動で <b>0.3%</b> を計算します。</div>
-
-          <div class="hr"></div>
-
-          <div class="row cols3">
-            <div>
-              <label>都道府県</label>
-              <select id="mPref"></select>
-            </div>
-            <div>
-              <label>エリアマネージャー名</label>
-              <input type="text" id="mManager" placeholder="例：福岡責任者：〇〇">
-            </div>
-            <div style="display:flex;align-items:flex-end;gap:10px">
-              <button class="btn-ok" id="btnSaveManager">💾 保存</button>
-              <button class="btn-bad" id="btnClearManager">🧽 解除</button>
-            </div>
-          </div>
-
-          <div class="hr"></div>
-          <h2 style="margin-top:0">現在の設定一覧</h2>
-          <div style="overflow:auto">
-            <table id="tblManagers">
-              <thead>
-                <tr>
-                  <th>都道府県</th>
-                  <th>エリアマネージャー</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>手当のルール（固定）</h2>
-          <div class="chips">
-            <div class="chip">エリアマネ手当：<b>都道府県の売上合計 × 0.3%</b></div>
-            <div class="chip">営業手当：<b>各入力の売上 × 0.3%</b></div>
-            <div class="chip">営業とエリアマネは <b>別人でもOK</b>（別別計算）</div>
-          </div>
-
-          <div class="hr"></div>
-
-          <h2>運用のコツ</h2>
-          <ul class="muted small" style="margin:0;padding-left:18px;line-height:1.7">
-            <li>入力者は「日付・都道府県・売上・請求」だけでOK。</li>
-            <li>委託会社が多い場合は「委託②」や「その他経費」にまとめて入力。</li>
-            <li>月締めは「集計・印刷」タブでPDF化して共有。</li>
-            <li>端末故障に備えて、定期的に「バックアップ(JSON)」推奨。</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== ③ 集計・印刷 ===== -->
-    <section id="tab-report" class="hide">
-      <div class="card">
-        <h2>集計条件</h2>
-
-        <div class="row cols4 no-print">
-          <div>
-            <label>開始日</label>
-            <input type="date" id="rFrom">
-          </div>
-          <div>
-            <label>終了日</label>
-            <input type="date" id="rTo">
-          </div>
-          <div>
-            <label>都道府県（絞り込み）</label>
-            <select id="rPref">
-              <option value="">全て</option>
-            </select>
-          </div>
-          <div>
-            <label>営業マン（絞り込み）</label>
-            <input type="text" id="rSales" placeholder="空欄=全て">
-          </div>
-        </div>
-
-        <div class="inline no-print">
-          <button class="btn-ok" id="btnBuild">📊 集計する</button>
-          <button class="btn-accent" id="btnPrint2">🖨️ この集計をPDF印刷</button>
-        </div>
-
-        <div class="hr"></div>
-
-        <!-- 印刷に出すヘッダ -->
-        <div class="inline">
-          <div class="chip"><b>集計対象</b>：<span id="printRange">（未集計）</span></div>
-          <div class="chip"><b>出力日</b>：<span id="printDate"></span></div>
-        </div>
-
-        <div class="hr"></div>
-
-        <h2>都道府県別 集計</h2>
-        <div style="overflow:auto">
-          <table id="tblPrefSum">
-            <thead>
-              <tr>
-                <th>都道府県</th>
-                <th class="right">売上合計</th>
-                <th class="right">請求+経費合計</th>
-                <th class="right">利益合計</th>
-                <th>エリアマネ</th>
-                <th class="right">エリアマネ0.3%</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-            <tfoot>
-              <tr>
-                <th>総合計</th>
-                <th class="right" id="tRev">0</th>
-                <th class="right" id="tCost">0</th>
-                <th class="right" id="tProf">0</th>
-                <th class="right">—</th>
-                <th class="right" id="tMgr">0</th>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-
-        <div class="hr"></div>
-
-        <h2>営業マン別 集計（営業0.3%）</h2>
-        <div style="overflow:auto">
-          <table id="tblSalesSum">
-            <thead>
-              <tr>
-                <th>営業マン</th>
-                <th class="right">売上合計</th>
-                <th class="right">利益合計</th>
-                <th class="right">営業0.3%</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-
-        <div class="hr"></div>
-
-        <h2>明細（対象データ）</h2>
-        <div class="muted small">※印刷にも出ます（必要ならここだけ非表示にもできます）</div>
-        <div style="overflow:auto;margin-top:10px">
-          <table id="tblDetail">
-            <thead>
-              <tr>
-                <th>日付</th>
-                <th>都道府県</th>
-                <th>営業</th>
-                <th>案件</th>
-                <th>委託会社</th>
-                <th class="right">売上</th>
-                <th class="right">請求+経費</th>
-                <th class="right">利益</th>
-                <th class="right">営業0.3%</th>
-                <th>メモ</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-
-      </div>
-
-      <div class="pagebreak"></div>
-
-      <div class="card">
-        <h2>支払い一覧（手当まとめ）</h2>
-        <div class="muted small">エリアマネ手当＋営業手当をまとめて確認できます。</div>
-
-        <div class="hr"></div>
-
-        <div style="overflow:auto">
-          <table id="tblPayout">
-            <thead>
-              <tr>
-                <th>区分</th>
-                <th>名前</th>
-                <th>対象</th>
-                <th class="right">支給額</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-            <tfoot>
-              <tr>
-                <th colspan="3" class="right">手当 合計</th>
-                <th class="right" id="tAllAllow">0</th>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </div>
-    </section>
+    <div class="card" style="margin-top:14px">
+      <h2>印刷サマリー（そのままPDFで提出）</h2>
+      <table>
+        <tbody>
+          <tr><th style="width:200px">対象月</th><td id="pMonth">—</td></tr>
+          <tr><th>入力者区分 / 名</th><td id="pWho">—</td></tr>
+          <tr><th>担当営業</th><td id="pSales">—</td></tr>
+          <tr><th>都道府県 / 拠点</th><td id="pArea">—</td></tr>
+          <tr><th>売上 / コスト / 利益</th><td id="pMoney">—</td></tr>
+          <tr><th>利益率 / 外注率</th><td id="pRates">—</td></tr>
+          <tr><th>手当（エリアマネ/営業）</th><td id="pAllow">—</td></tr>
+          <tr><th>メモ</th><td id="pMemo">—</td></tr>
+        </tbody>
+      </table>
+    </div>
 
   </div>
 
   <script>
-    // ==============================
-    //  データ構造
-    // ==============================
-    const LS_KEY = "ofa_sales_manager_v1";
-    const LS_MGR = "ofa_sales_managers_v1";
+    const RATE = 0.003; // 0.3%
+    const LS_KEY = "ofa_monthly_report_v1";
 
-    // 都道府県リスト
     const PREFS = [
       "北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県",
       "茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県",
@@ -516,502 +278,154 @@
       "滋賀県","京都府","大阪府","兵庫県","奈良県","和歌山県",
       "鳥取県","島根県","岡山県","広島県","山口県",
       "徳島県","香川県","愛媛県","高知県",
-      "福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県"
+      "福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県",
+      "エリア外","本部営業"
     ];
 
-    // ルール
-    const RATE_MANAGER = 0.003; // 0.3%
-    const RATE_SALES   = 0.003; // 0.3%
+    const el = (id)=>document.getElementById(id);
+    const month = el("month");
+    const role = el("role");
+    const reporter = el("reporter");
+    const salesOwner = el("salesOwner");
+    const pref = el("pref");
+    const base = el("base");
+    const memoShort = el("memoShort");
 
-    let rows = loadRows();           // 明細
-    let managers = loadManagers();   // 都道府県→エリアマネ
+    const revenue = el("revenue");
+    const outsource = el("outsource");
+    const otherCost = el("otherCost");
+    const outsourceMemo = el("outsourceMemo");
+    const memoLong = el("memoLong");
 
-    let sortDesc = true;
-
-    // ==============================
-    //  共通ユーティリティ
-    // ==============================
     const yen = n => (Number(n)||0).toLocaleString("ja-JP");
     const toNum = v => {
-      if(v === null || v === undefined) return 0;
-      const s = String(v).replace(/[^\d.-]/g,"");
+      const s = String(v ?? "").replace(/[^\d.-]/g,"");
       const n = Number(s);
       return Number.isFinite(n) ? n : 0;
     };
-    const todayISO = () => {
+    const pct = v => (v*100).toFixed(1) + "%";
+    const nowMonth = ()=>{
       const d = new Date();
       const off = d.getTimezoneOffset();
       const local = new Date(d.getTime() - off*60000);
-      return local.toISOString().slice(0,10);
+      return local.toISOString().slice(0,7);
     };
-    const uid = () => "id_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
 
-    function saveRows(){
-      localStorage.setItem(LS_KEY, JSON.stringify(rows));
-    }
-    function loadRows(){
-      try{
-        const raw = localStorage.getItem(LS_KEY);
-        return raw ? JSON.parse(raw) : [];
-      }catch(e){ return []; }
-    }
-    function saveManagers(){
-      localStorage.setItem(LS_MGR, JSON.stringify(managers));
-    }
-    function loadManagers(){
-      try{
-        const raw = localStorage.getItem(LS_MGR);
-        return raw ? JSON.parse(raw) : {};
-      }catch(e){ return {}; }
-    }
-
-    function setSelectOptions(sel, list, addAll=false){
-      sel.innerHTML = "";
-      if(addAll){
-        const op = document.createElement("option");
-        op.value = "";
-        op.textContent = "全て";
-        sel.appendChild(op);
-      }
-      list.forEach(p=>{
+    function setPrefOptions(){
+      pref.innerHTML = "";
+      PREFS.forEach(p=>{
         const op = document.createElement("option");
         op.value = p;
         op.textContent = p;
-        sel.appendChild(op);
+        pref.appendChild(op);
       });
     }
 
-    function switchTab(tab){
-      document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active", t.dataset.tab===tab));
-      document.querySelectorAll("section[id^='tab-']").forEach(s=>s.classList.add("hide"));
-      document.getElementById("tab-"+tab).classList.remove("hide");
-      if(tab==="entry") renderRecent();
-      if(tab==="masters") renderManagers();
-      if(tab==="report") {
-        document.getElementById("printDate").textContent = new Date().toLocaleString("ja-JP");
-      }
+    function recalc(){
+      const rev = toNum(revenue.value);
+      const out = toNum(outsource.value);
+      const oth = toNum(otherCost.value);
+
+      const cost = out + oth;
+      const prof = rev - cost;
+      const pr = rev ? (prof / rev) : 0;
+      const or = rev ? (out / rev) : 0;
+
+      el("costSum").textContent = yen(cost);
+      el("profitSum").textContent = yen(prof);
+      el("profitSum").className = prof>=0 ? "good" : "bad";
+      el("profitRate").textContent = pct(pr);
+      el("outRate").textContent = pct(or);
+
+      const am = Math.floor(rev * RATE);
+      const as = Math.floor(rev * RATE);
+      el("allowMgr").textContent = yen(am);
+      el("allowSales").textContent = yen(as);
+      el("allowAll").textContent = yen(am+as);
+
+      el("pMonth").textContent = month.value || "—";
+      el("pWho").textContent = `${role.value} / ${reporter.value || "—"}`;
+      el("pSales").textContent = salesOwner.value || "—";
+      el("pArea").textContent = `${pref.value || "—"} / ${base.value || "—"}`;
+      el("pMoney").textContent = `売上 ${yen(rev)}円 / コスト ${yen(cost)}円 / 利益 ${yen(prof)}円`;
+      el("pRates").textContent = `利益率 ${pct(pr)} / 外注率 ${pct(or)}`;
+      el("pAllow").textContent = `エリアマネ ${yen(am)}円 / 営業 ${yen(as)}円 / 合計 ${yen(am+as)}円`;
+
+      const memoAll = [
+        memoShort.value ? `短文：${memoShort.value}` : "",
+        outsourceMemo.value ? `委託内訳：${outsourceMemo.value}` : "",
+        memoLong.value ? `詳細：${memoLong.value}` : ""
+      ].filter(Boolean).join("\n");
+      el("pMemo").textContent = memoAll || "—";
     }
 
-    // ==============================
-    //  初期化
-    // ==============================
-    const fDate = document.getElementById("fDate");
-    const fPref = document.getElementById("fPref");
-    const mPref = document.getElementById("mPref");
-    const rPref = document.getElementById("rPref");
+    [month,role,reporter,salesOwner,pref,base,memoShort,revenue,outsource,otherCost,outsourceMemo,memoLong]
+      .forEach(x=>x.addEventListener("input", recalc));
 
-    setSelectOptions(fPref, PREFS);
-    setSelectOptions(mPref, PREFS);
-    setSelectOptions(rPref, PREFS, true);
-
-    fDate.value = todayISO();
-
-    // タブ
-    document.querySelectorAll(".tab").forEach(t=>{
-      t.addEventListener("click", ()=>switchTab(t.dataset.tab));
+    [revenue,outsource,otherCost].forEach(inp=>{
+      inp.addEventListener("blur", ()=>{
+        const n = toNum(inp.value);
+        inp.value = n ? n.toLocaleString("ja-JP") : "";
+        recalc();
+      });
     });
 
-    // ==============================
-    //  ① 追加保存
-    // ==============================
-    document.getElementById("btnAdd").addEventListener("click", ()=>{
-      const date = fDate.value || todayISO();
-      const pref = fPref.value;
-      const sales = (document.getElementById("fSales").value || "").trim();
-      const project = (document.getElementById("fProject").value || "").trim();
+    function collect(){
+      const rev = toNum(revenue.value);
+      const out = toNum(outsource.value);
+      const oth = toNum(otherCost.value);
+      const cost = out + oth;
+      const prof = rev - cost;
+      const pr = rev ? prof/rev : 0;
+      const or = rev ? out/rev : 0;
 
-      const revenue = toNum(document.getElementById("fRevenue").value);
-      const v1n = (document.getElementById("fVendor1Name").value || "").trim();
-      const v1a = toNum(document.getElementById("fVendor1Amt").value);
-      const v2n = (document.getElementById("fVendor2Name").value || "").trim();
-      const v2a = toNum(document.getElementById("fVendor2Amt").value);
-      const other = toNum(document.getElementById("fOtherCost").value);
-      const memo = (document.getElementById("fMemo").value || "").trim();
-
-      if(!pref){ alert("都道府県を選んでください"); return; }
-      if(!sales){ alert("営業マン名を入力してください"); return; }
-      if(revenue<=0){ alert("売上（円）を入力してください"); return; }
-
-      const cost = (v1a||0) + (v2a||0) + (other||0);
-      const profit = revenue - cost;
-      const salesAllow = Math.floor(revenue * RATE_SALES);
-
-      const row = {
-        id: uid(),
-        date, pref, sales, project,
-        revenue,
-        vendors: [
-          {name:v1n, amount:v1a},
-          {name:v2n, amount:v2a}
-        ].filter(x => (x.name && x.amount) || x.amount),
-        otherCost: other,
-        memo,
-        cost,
-        profit,
-        salesAllow
+      return {
+        month: month.value || "",
+        role: role.value || "",
+        reporter: reporter.value || "",
+        salesOwner: salesOwner.value || "",
+        pref: pref.value || "",
+        base: base.value || "",
+        memoShort: memoShort.value || "",
+        revenue: rev,
+        outsource: out,
+        otherCost: oth,
+        profit: prof,
+        profitRate: pr,
+        outsourceRate: or,
+        allowMgr: Math.floor(rev*RATE),
+        allowSales: Math.floor(rev*RATE),
+        outsourceMemo: outsourceMemo.value || "",
+        memoLong: memoLong.value || "",
+        exportedAt: new Date().toISOString()
       };
-
-      rows.push(row);
-      saveRows();
-      clearEntryInputsKeepBasics();
-      renderRecent();
-      alert("保存しました");
-    });
-
-    function clearEntryInputsKeepBasics(){
-      document.getElementById("fProject").value = "";
-      document.getElementById("fRevenue").value = "";
-      document.getElementById("fVendor1Name").value = "";
-      document.getElementById("fVendor1Amt").value = "";
-      document.getElementById("fVendor2Name").value = "";
-      document.getElementById("fVendor2Amt").value = "";
-      document.getElementById("fOtherCost").value = "";
-      document.getElementById("fMemo").value = "";
-      fDate.value = todayISO();
     }
 
-    // 並び替え
-    document.getElementById("btnSortNew").addEventListener("click", ()=>{ sortDesc=true; renderRecent(); });
-    document.getElementById("btnSortOld").addEventListener("click", ()=>{ sortDesc=false; renderRecent(); });
-
-    // 選択操作
-    document.getElementById("btnSelectAll").addEventListener("click", ()=>{
-      document.querySelectorAll(".chkRow").forEach(c=>c.checked=true);
-    });
-    document.getElementById("btnClearSelect").addEventListener("click", ()=>{
-      document.querySelectorAll(".chkRow").forEach(c=>c.checked=false);
-    });
-
-    document.getElementById("btnDeleteSelected").addEventListener("click", ()=>{
-      const ids = [...document.querySelectorAll(".chkRow:checked")].map(c=>c.dataset.id);
-      if(ids.length===0){ alert("削除する行を選択してください"); return; }
-      if(!confirm(`選択した ${ids.length} 件を削除します。よろしいですか？`)) return;
-      rows = rows.filter(r=>!ids.includes(r.id));
-      saveRows();
-      renderRecent();
-    });
-
-    // 直近テーブル描画
-    function renderRecent(){
-      const tbody = document.querySelector("#tblRecent tbody");
-      tbody.innerHTML = "";
-
-      const list = [...rows].sort((a,b)=>{
-        const da = a.date + (a.id||"");
-        const db = b.date + (b.id||"");
-        return sortDesc ? (db.localeCompare(da)) : (da.localeCompare(db));
-      }).slice(0,200);
-
-      list.forEach(r=>{
-        const tr = document.createElement("tr");
-        const profitCls = r.profit>=0 ? "good" : "bad";
-        tr.innerHTML = `
-          <td class="no-print"><input type="checkbox" class="chkRow" data-id="${r.id}"></td>
-          <td>${escapeHtml(r.date)}</td>
-          <td>${escapeHtml(r.pref)}</td>
-          <td>${escapeHtml(r.sales)}</td>
-          <td class="right">${yen(r.revenue)}</td>
-          <td class="right">${yen(r.cost)}</td>
-          <td class="right ${profitCls}">${yen(r.profit)}</td>
-          <td class="right">${yen(r.salesAllow)}</td>
-          <td class="no-print">
-            <button class="btn small" data-act="edit" data-id="${r.id}">✏️</button>
-            <button class="btn-bad small" data-act="del" data-id="${r.id}">🗑️</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      tbody.querySelectorAll("button[data-act]").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          const id = btn.dataset.id;
-          const act = btn.dataset.act;
-          if(act==="del") delRow(id);
-          if(act==="edit") editRow(id);
-        });
-      });
+    function saveLocal(){
+      const data = collect();
+      localStorage.setItem(LS_KEY, JSON.stringify(data));
+      alert("端末に保存しました");
     }
 
-    function delRow(id){
-      const r = rows.find(x=>x.id===id);
-      if(!r) return;
-      if(!confirm(`削除しますか？\n${r.date} / ${r.pref} / ${r.sales} / 売上 ${yen(r.revenue)}円`)) return;
-      rows = rows.filter(x=>x.id!==id);
-      saveRows();
-      renderRecent();
+    function loadLocal(){
+      try{
+        const raw = localStorage.getItem(LS_KEY);
+        if(!raw) return;
+        const d = JSON.parse(raw);
+        month.value = d.month || nowMonth();
+        role.value = d.role || "エリアマネ";
+        reporter.value = d.reporter || "";
+        salesOwner.value = d.salesOwner || "";
+        pref.value = d.pref || "鹿児島県";
+        base.value = d.base || "";
+        memoShort.value = d.memoShort || "";
+        revenue.value = d.revenue ? Number(d.revenue).toLocaleString("ja-JP") : "";
+        outsource.value = d.outsource ? Number(d.outsource).toLocaleString("ja-JP") : "";
+        otherCost.value = d.otherCost ? Number(d.otherCost).toLocaleString("ja-JP") : "";
+        outsourceMemo.value = d.outsourceMemo || "";
+        memoLong.value = d.memoLong || "";
+      }catch(e){}
     }
-
-    function editRow(id){
-      const r = rows.find(x=>x.id===id);
-      if(!r) return;
-
-      // 入力欄に反映（簡易編集）
-      fDate.value = r.date;
-      fPref.value = r.pref;
-      document.getElementById("fSales").value = r.sales;
-      document.getElementById("fProject").value = r.project || "";
-      document.getElementById("fRevenue").value = r.revenue;
-
-      const v1 = r.vendors?.[0] || {name:"",amount:0};
-      const v2 = r.vendors?.[1] || {name:"",amount:0};
-      document.getElementById("fVendor1Name").value = v1.name || "";
-      document.getElementById("fVendor1Amt").value = v1.amount || "";
-      document.getElementById("fVendor2Name").value = v2.name || "";
-      document.getElementById("fVendor2Amt").value = v2.amount || "";
-      document.getElementById("fOtherCost").value = r.otherCost || "";
-      document.getElementById("fMemo").value = r.memo || "";
-
-      // 元行削除して再追加（確実運用）
-      rows = rows.filter(x=>x.id!==id);
-      saveRows();
-      renderRecent();
-      switchTab("entry");
-      alert("編集モード：内容を修正して「追加して保存」を押してください（元データは置換されます）");
-    }
-
-    function escapeHtml(s){
-      return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-    }
-
-    // ==============================
-    //  ② マスター（エリアマネ）
-    // ==============================
-    document.getElementById("btnSaveManager").addEventListener("click", ()=>{
-      const p = mPref.value;
-      const name = (document.getElementById("mManager").value || "").trim();
-      if(!p){ alert("都道府県を選んでください"); return; }
-      if(!name){ alert("エリアマネ名を入力してください"); return; }
-      managers[p] = name;
-      saveManagers();
-      renderManagers();
-      alert("保存しました");
-    });
-
-    document.getElementById("btnClearManager").addEventListener("click", ()=>{
-      const p = mPref.value;
-      if(!p){ alert("都道府県を選んでください"); return; }
-      if(!confirm(`${p} のエリアマネ設定を解除しますか？`)) return;
-      delete managers[p];
-      saveManagers();
-      renderManagers();
-    });
-
-    function renderManagers(){
-      const tbody = document.querySelector("#tblManagers tbody");
-      tbody.innerHTML = "";
-      PREFS.forEach(p=>{
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${escapeHtml(p)}</td>
-          <td>${escapeHtml(managers[p] || "（未設定）")}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    // ==============================
-    //  ③ 集計
-    // ==============================
-    const rFrom = document.getElementById("rFrom");
-    const rTo   = document.getElementById("rTo");
-    const rSales= document.getElementById("rSales");
-
-    // デフォルト：今月
-    (function initReportDates(){
-      const now = new Date();
-      const y = now.getFullYear();
-      const m = now.getMonth();
-      const first = new Date(y,m,1);
-      const last = new Date(y,m+1,0);
-      const toISO = d => new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10);
-      rFrom.value = toISO(first);
-      rTo.value   = toISO(last);
-      document.getElementById("printDate").textContent = new Date().toLocaleString("ja-JP");
-    })();
-
-    document.getElementById("btnBuild").addEventListener("click", buildReport);
-    document.getElementById("btnPrint2").addEventListener("click", ()=>{
-      buildReport();
-      window.print();
-    });
-
-    function inRange(date, from, to){
-      if(from && date < from) return false;
-      if(to && date > to) return false;
-      return true;
-    }
-
-    function buildReport(){
-      const from = rFrom.value;
-      const to = rTo.value;
-      const prefFilter = rPref.value || "";
-      const salesFilter = (rSales.value || "").trim();
-
-      const filtered = rows.filter(r=>{
-        if(!inRange(r.date, from, to)) return false;
-        if(prefFilter && r.pref !== prefFilter) return false;
-        if(salesFilter && r.sales !== salesFilter) return false;
-        return true;
-      }).sort((a,b)=> (a.date + a.id).localeCompare(b.date + b.id));
-
-      document.getElementById("printRange").textContent =
-        `${from || "—"} 〜 ${to || "—"} / 都道府県：${prefFilter || "全て"} / 営業：${salesFilter || "全て"} / 件数：${filtered.length}`;
-
-      // 都道府県集計
-      const prefMap = {}; // pref -> {rev,cost,prof,managerName,managerAllow}
-      filtered.forEach(r=>{
-        if(!prefMap[r.pref]) prefMap[r.pref] = {rev:0,cost:0,prof:0, manager: managers[r.pref] || "（未設定）"};
-        prefMap[r.pref].rev += r.revenue||0;
-        prefMap[r.pref].cost += r.cost||0;
-        prefMap[r.pref].prof += r.profit||0;
-      });
-
-      // 営業集計
-      const salesMap = {}; // sales -> {rev,prof,allow}
-      filtered.forEach(r=>{
-        if(!salesMap[r.sales]) salesMap[r.sales] = {rev:0,prof:0};
-        salesMap[r.sales].rev += r.revenue||0;
-        salesMap[r.sales].prof += r.profit||0;
-      });
-
-      // テーブル描画：都道府県
-      const tbPref = document.querySelector("#tblPrefSum tbody");
-      tbPref.innerHTML = "";
-      let totalRev=0,totalCost=0,totalProf=0,totalMgrAllow=0;
-
-      Object.keys(prefMap).sort().forEach(p=>{
-        const o = prefMap[p];
-        const mgrAllow = Math.floor(o.rev * RATE_MANAGER);
-        totalRev += o.rev; totalCost += o.cost; totalProf += o.prof; totalMgrAllow += mgrAllow;
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${escapeHtml(p)}</td>
-          <td class="right">${yen(o.rev)}</td>
-          <td class="right">${yen(o.cost)}</td>
-          <td class="right ${o.prof>=0?'good':'bad'}">${yen(o.prof)}</td>
-          <td>${escapeHtml(o.manager)}</td>
-          <td class="right">${yen(mgrAllow)}</td>
-        `;
-        tbPref.appendChild(tr);
-      });
-
-      document.getElementById("tRev").textContent = yen(totalRev);
-      document.getElementById("tCost").textContent = yen(totalCost);
-      document.getElementById("tProf").textContent = yen(totalProf);
-      document.getElementById("tMgr").textContent = yen(totalMgrAllow);
-
-      // テーブル描画：営業
-      const tbSales = document.querySelector("#tblSalesSum tbody");
-      tbSales.innerHTML = "";
-      Object.keys(salesMap).sort().forEach(s=>{
-        const o = salesMap[s];
-        const allow = Math.floor(o.rev * RATE_SALES);
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${escapeHtml(s)}</td>
-          <td class="right">${yen(o.rev)}</td>
-          <td class="right ${o.prof>=0?'good':'bad'}">${yen(o.prof)}</td>
-          <td class="right">${yen(allow)}</td>
-        `;
-        tbSales.appendChild(tr);
-      });
-
-      // 明細
-      const tbDet = document.querySelector("#tblDetail tbody");
-      tbDet.innerHTML = "";
-      filtered.forEach(r=>{
-        const vnames = (r.vendors||[]).map(v=>`${v.name || "委託"}:${yen(v.amount||0)}円`).join(" / ");
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${escapeHtml(r.date)}</td>
-          <td>${escapeHtml(r.pref)}</td>
-          <td>${escapeHtml(r.sales)}</td>
-          <td>${escapeHtml(r.project || "")}</td>
-          <td>${escapeHtml(vnames || "")}</td>
-          <td class="right">${yen(r.revenue)}</td>
-          <td class="right">${yen(r.cost)}</td>
-          <td class="right ${r.profit>=0?'good':'bad'}">${yen(r.profit)}</td>
-          <td class="right">${yen(Math.floor((r.revenue||0)*RATE_SALES))}</td>
-          <td>${escapeHtml(r.memo || "")}</td>
-        `;
-        tbDet.appendChild(tr);
-      });
-
-      // 支払い一覧（手当）
-      const tbPay = document.querySelector("#tblPayout tbody");
-      tbPay.innerHTML = "";
-      let allowTotal = 0;
-
-      // エリアマネ
-      Object.keys(prefMap).sort().forEach(p=>{
-        const o = prefMap[p];
-        const mgrName = managers[p] || "";
-        if(!mgrName) return; // 未設定は出さない
-        const amt = Math.floor(o.rev * RATE_MANAGER);
-        allowTotal += amt;
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>エリアマネ</td>
-          <td>${escapeHtml(mgrName)}</td>
-          <td>${escapeHtml(p)} 売上合計 ${yen(o.rev)}円 × 0.3%</td>
-          <td class="right">${yen(amt)}</td>
-        `;
-        tbPay.appendChild(tr);
-      });
-
-      // 営業
-      Object.keys(salesMap).sort().forEach(s=>{
-        const o = salesMap[s];
-        const amt = Math.floor(o.rev * RATE_SALES);
-        allowTotal += amt;
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>営業</td>
-          <td>${escapeHtml(s)}</td>
-          <td>売上合計 ${yen(o.rev)}円 × 0.3%</td>
-          <td class="right">${yen(amt)}</td>
-        `;
-        tbPay.appendChild(tr);
-      });
-
-      document.getElementById("tAllAllow").textContent = yen(allowTotal);
-
-      // 印刷日
-      document.getElementById("printDate").textContent = new Date().toLocaleString("ja-JP");
-    }
-
-    // ==============================
-    //  印刷・CSV・バックアップ
-    // ==============================
-    document.getElementById("btnPrint").addEventListener("click", ()=>{
-      switchTab("report");
-      buildReport();
-      window.print();
-    });
-
-    document.getElementById("btnCSV").addEventListener("click", ()=>{
-      const header = [
-        "id","date","pref","sales","project","revenue","vendor1","vendor1_amount","vendor2","vendor2_amount","otherCost","cost","profit","salesAllow","memo"
-      ];
-      const lines = [header.join(",")];
-      rows.forEach(r=>{
-        const v1 = r.vendors?.[0] || {name:"",amount:0};
-        const v2 = r.vendors?.[1] || {name:"",amount:0};
-        const cols = [
-          r.id, r.date, r.pref, r.sales, (r.project||""),
-          r.revenue||0,
-          (v1.name||""), (v1.amount||0),
-          (v2.name||""), (v2.amount||0),
-          r.otherCost||0,
-          r.cost||0,
-          r.profit||0,
-          Math.floor((r.revenue||0)*RATE_SALES),
-          (r.memo||"")
-        ].map(csvEscape);
-        lines.push(cols.join(","));
-      });
-      downloadText(lines.join("\n"), `OFA_売上管理_${todayISO()}.csv`, "text/csv");
-    });
 
     function csvEscape(v){
       const s = String(v ?? "");
@@ -1023,66 +437,90 @@
       const blob = new Blob([text], {type:mime});
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
+      a.href = url; a.download = filename;
       document.body.appendChild(a);
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
     }
 
-    document.getElementById("btnBackup").addEventListener("click", ()=>{
-      const payload = {
-        version:"v1",
-        exportedAt: new Date().toISOString(),
-        rows,
-        managers
-      };
-      downloadText(JSON.stringify(payload, null, 2), `OFA_売上管理_BACKUP_${todayISO()}.json`, "application/json");
-    });
+    function exportCSV(){
+      const d = collect();
+      const header = [
+        "month","role","reporter","salesOwner","pref","base",
+        "revenue","outsource","otherCost","cost","profit",
+        "profitRate","outsourceRate",
+        "allowMgr","allowSales",
+        "memoShort","outsourceMemo","memoLong","exportedAt"
+      ];
+      const cost = d.outsource + d.otherCost;
+      const row = [
+        d.month,d.role,d.reporter,d.salesOwner,d.pref,d.base,
+        d.revenue,d.outsource,d.otherCost,cost,d.profit,
+        d.profitRate,d.outsourceRate,
+        d.allowMgr,d.allowSales,
+        d.memoShort,d.outsourceMemo,d.memoLong,d.exportedAt
+      ].map(csvEscape);
+      const csv = header.join(",") + "\n" + row.join(",");
+      const fn = `OFA_月次報告_${d.month || "未設定"}_${d.pref || "未設定"}_${d.base || "拠点"}.csv`;
+      downloadText(csv, fn, "text/csv");
+    }
 
-    document.getElementById("jsonImport").addEventListener("change", async (e)=>{
-      const file = e.target.files?.[0];
-      if(!file) return;
-      try{
-        const text = await file.text();
-        const data = JSON.parse(text);
-        if(!data || !data.rows) throw new Error("形式が違います");
-        if(!confirm("このJSONで復元しますか？（現在のデータは上書きされます）")) return;
-        rows = Array.isArray(data.rows) ? data.rows : [];
-        managers = data.managers || {};
-        saveRows(); saveManagers();
-        renderRecent(); renderManagers();
-        alert("復元しました");
-      }catch(err){
-        alert("読み込みに失敗しました：" + err.message);
-      }finally{
-        e.target.value = "";
-      }
-    });
+    function exportPDF(){
+      recalc();
+      window.print();
+    }
 
-    document.getElementById("btnReset").addEventListener("click", ()=>{
-      if(!confirm("全データを削除します。復元できません。よろしいですか？")) return;
-      rows = [];
-      managers = {};
-      saveRows(); saveManagers();
-      renderRecent(); renderManagers();
-      alert("削除しました");
-    });
+    function clearAll(){
+      if(!confirm("入力をクリアしますか？")) return;
+      month.value = nowMonth();
+      role.value = "エリアマネ";
+      reporter.value = "";
+      salesOwner.value = "";
+      pref.value = "鹿児島県";
+      base.value = "";
+      memoShort.value = "";
+      revenue.value = "";
+      outsource.value = "";
+      otherCost.value = "";
+      outsourceMemo.value = "";
+      memoLong.value = "";
+      recalc();
+    }
 
-    // 初回描画
-    renderRecent();
+    // ===== LPパラメータから自動入力（拠点LP対応）=====
+    function applyParams(){
+      const qs = new URLSearchParams(location.search);
+      const pPref = qs.get("pref");
+      const pBase = qs.get("base");
+      const pSales = qs.get("sales");
+      const pRole = qs.get("role");
+      const pReporter = qs.get("reporter");
+      const pMonth = qs.get("month");
 
-    // ==============================
-    //  入力を見やすく：円フォーマット（任意）
-    // ==============================
-    ["fRevenue","fVendor1Amt","fVendor2Amt","fOtherCost"].forEach(id=>{
-      const el = document.getElementById(id);
-      el.addEventListener("blur", ()=>{
-        const n = toNum(el.value);
-        el.value = n ? n.toLocaleString("ja-JP") : "";
-      });
-    });
+      if (pMonth) month.value = pMonth;
+      if (pPref) pref.value = pPref;
+      if (pBase) base.value = pBase;
+      if (pSales) salesOwner.value = pSales;
+      if (pRole) role.value = pRole;
+      if (pReporter) reporter.value = pReporter;
+
+      recalc();
+    }
+
+    // init
+    setPrefOptions();
+    month.value = nowMonth();
+    pref.value = "鹿児島県";
+    loadLocal();
+    applyParams();
+    recalc();
+
+    // actions
+    el("btnPDF").addEventListener("click", exportPDF);
+    el("btnCSV").addEventListener("click", exportCSV);
+    el("btnSave").addEventListener("click", saveLocal);
+    el("btnClear").addEventListener("click", clearAll);
   </script>
 </body>
 </html>
