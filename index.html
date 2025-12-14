@@ -3,16 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>OFA 拠点別 売上・委託・利益 月次管理（PDF/CSV/OCR/PDF）</title>
+  <title>OFA 月次 売上管理（拠点別 / PDF・CSV / OCR候補選択 / 売上単価マスター）</title>
 
-  <!-- PDF.js（PDF請求書が“テキスト埋め込み”の場合に読めます） -->
+  <!-- PDF.js（テキスト埋め込みPDFなら抽出可） -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.js"></script>
 
   <style>
     :root{
       --bg:#fff;
       --card:#fff;
-      --border:#d9d9d9;
+      --border:#dadada;
       --text:#111;
       --muted:#666;
 
@@ -22,7 +22,8 @@
       --green:#0FA958;
       --blue:#0066CC;
 
-      --radius:14px;
+      --radius:16px;
+      --shadow:0 8px 24px rgba(0,0,0,.08);
     }
     *{box-sizing:border-box}
     body{
@@ -31,33 +32,33 @@
       background:var(--bg);
       color:var(--text);
     }
-    .wrap{max-width:1380px;margin:0 auto;padding:14px 14px 120px}
+    .wrap{max-width:1100px;margin:0 auto;padding:12px 12px 120px}
 
-    /* ===== Header ===== */
+    /* Top */
     .topbar{
       position:sticky;top:0;z-index:50;
       background:#fff;
       border-bottom:3px solid var(--black);
-      padding:12px 10px;
-      margin:-14px -14px 14px;
+      padding:10px 10px;
+      margin:-12px -12px 12px;
       display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;
     }
     .brand{display:flex;gap:10px;align-items:center}
     .logo{
-      width:48px;height:48px;border-radius:14px;
+      width:44px;height:44px;border-radius:14px;
       background:var(--yellow);
       border:3px solid var(--black);
       display:grid;place-items:center;
       font-weight:1000;color:#000;letter-spacing:.03em;
     }
-    .brand h1{margin:0;font-size:18px;font-weight:1000}
+    .brand h1{margin:0;font-size:16px;font-weight:1000}
     .brand .sub{margin-top:2px;color:var(--muted);font-size:12px;font-weight:800}
 
     .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
     .btn{
       border:3px solid var(--black);
       border-radius:12px;
-      padding:10px 14px;
+      padding:10px 12px;
       font-weight:1000;
       cursor:pointer;
       background:#f5f5f5;
@@ -69,9 +70,10 @@
     .btn-blue{background:var(--blue);color:#fff;border-color:#003b73}
     .btn-green{background:var(--green);color:#fff;border-color:#0b6f3d}
     .btn-red{background:var(--red);color:#fff;border-color:#8f000b}
+    .btn-ghost{background:#fff}
 
-    /* ===== Tabs ===== */
-    .tabs{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 14px}
+    /* Nav */
+    .tabs{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 12px}
     .tab{
       border:2px solid var(--black);
       border-radius:999px;
@@ -81,32 +83,41 @@
       cursor:pointer;
     }
     .tab.active{background:var(--yellow)}
+
+    /* Cards */
     .card{
       background:var(--card);
       border:3px solid var(--black);
       border-radius:var(--radius);
       padding:14px;
-      margin-bottom:14px;
+      margin-bottom:12px;
+      box-shadow:var(--shadow);
     }
-    .muted{color:var(--muted);font-size:12px;font-weight:700;line-height:1.6}
-    h2{margin:0 0 10px;font-size:15px;font-weight:1000}
-    h3{margin:0 0 10px;font-size:13px;font-weight:1000}
+    .muted{color:var(--muted);font-size:12px;font-weight:800;line-height:1.7}
+    h2{margin:0 0 10px;font-size:14px;font-weight:1000}
+    .step{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+    .badge{
+      width:30px;height:30px;border-radius:10px;
+      background:var(--yellow);
+      border:3px solid var(--black);
+      display:grid;place-items:center;
+      font-weight:1000;
+    }
 
     .row{display:grid;gap:10px}
-    @media(min-width:980px){
+    @media(min-width:920px){
       .cols2{grid-template-columns:1fr 1fr}
       .cols3{grid-template-columns:1fr 1fr 1fr}
       .cols4{grid-template-columns:1fr 1fr 1fr 1fr}
       .cols5{grid-template-columns:1fr 1fr 1fr 1fr 1fr}
-      .cols6{grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr}
     }
     label{display:block;font-size:12px;font-weight:1000;margin:0 0 5px}
     input,select,textarea{
       width:100%;
-      padding:10px 10px;
-      border-radius:12px;
+      padding:12px 12px;
+      border-radius:14px;
       border:2px solid var(--border);
-      font-size:14px;
+      font-size:15px;
       background:#fff;
       color:var(--text);
       outline:none;
@@ -115,32 +126,35 @@
     input:focus,select:focus,textarea:focus{border-color:#999}
     .hr{height:2px;background:rgba(0,0,0,.12);margin:12px 0}
 
-    /* ===== Tables ===== */
+    /* Tables */
     .tableWrap{overflow:auto;border:2px solid var(--border);border-radius:14px}
     table{width:100%;border-collapse:collapse;font-size:13px;background:#fff}
-    th,td{border:1px solid var(--border);padding:9px;white-space:nowrap;vertical-align:middle}
+    th,td{border:1px solid var(--border);padding:10px;white-space:nowrap;vertical-align:middle}
     th{background:#f2f2f2;text-align:left;font-weight:1000}
     td.right, th.right{text-align:right}
     td.center, th.center{text-align:center}
 
-    /* ===== Numbers ===== */
+    /* KPI */
     .num{font-variant-numeric:tabular-nums}
     .good{color:var(--green);font-weight:1000}
     .bad{color:var(--red);font-weight:1000}
     .blue{color:var(--blue);font-weight:1000}
-
     .kpiRow{display:grid;gap:10px}
-    @media(min-width:980px){.kpiRow{grid-template-columns:1fr 1fr 1fr 1fr}}
+    @media(min-width:920px){.kpiRow{grid-template-columns:1fr 1fr 1fr 1fr}}
     .kpi{
       border:2px solid var(--border);
       border-radius:14px;
       padding:10px 12px;
       background:#fff;
     }
-    .kpi .t{font-size:12px;color:var(--muted);font-weight:900}
+    .kpi .t{font-size:12px;color:var(--muted);font-weight:1000}
     .kpi .v{margin-top:6px;font-size:18px;font-weight:1000}
-    .kpi .s{margin-top:2px;font-size:12px;color:var(--muted);font-weight:800}
 
+    /* Simple toggle hint */
+    .toggleBox{
+      display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+      background:#fff;border:2px dashed var(--border);border-radius:14px;padding:10px 12px;
+    }
     .pill{
       display:inline-flex;align-items:center;gap:6px;
       border:2px solid var(--black);
@@ -150,18 +164,59 @@
       background:#fff;
       font-size:12px;
     }
-    .pill-yellow{background:var(--yellow)}
-    .pill-blue{background:#e8f1ff;border-color:#003b73}
-    .pill-green{background:#e9fff3;border-color:#0b6f3d}
     .pill-red{background:#ffe9ec;border-color:#8f000b}
+    .pill-green{background:#e9fff3;border-color:#0b6f3d}
+    .pill-blue{background:#e8f1ff;border-color:#003b73}
 
-    /* ===== Print ===== */
+    /* Modal */
+    .modalBg{
+      position:fixed;inset:0;background:rgba(0,0,0,.45);
+      display:none;align-items:center;justify-content:center;z-index:999;
+      padding:14px;
+    }
+    .modal{
+      width:min(760px, 100%);
+      background:#fff;border:3px solid var(--black);
+      border-radius:18px;box-shadow:0 18px 60px rgba(0,0,0,.25);
+      overflow:hidden;
+    }
+    .modalHead{
+      padding:12px 14px;border-bottom:2px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      background:var(--yellow);
+    }
+    .modalHead .title{font-weight:1000}
+    .modalBody{padding:14px}
+    .choice{
+      border:2px solid var(--border);border-radius:14px;
+      padding:10px 12px;display:flex;justify-content:space-between;align-items:center;
+      cursor:pointer;gap:10px;margin-bottom:8px;
+    }
+    .choice:hover{border-color:#999}
+    .choice .big{font-weight:1000}
+    .choice .small{font-size:12px;color:var(--muted);font-weight:900}
+    .modalFoot{
+      padding:12px 14px;border-top:2px solid var(--border);
+      display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;background:#fafafa;
+    }
+
+    /* Print (A4) */
+    @page { size: A4; margin: 10mm; }
+    .printArea{display:none}
     @media print{
       .no-print{display:none !important}
       .wrap{padding:0}
-      .card{border:1px solid #000}
-      .topbar{display:none}
-      th{background:#efefef !important}
+      body{background:#fff}
+      .card{box-shadow:none}
+      .printArea{display:block}
+      .printCard{
+        border:1px solid #000;border-radius:10px;padding:10px;margin-bottom:10px;
+      }
+      .printTitle{font-weight:1000;font-size:14px;margin:0 0 6px}
+      .printMeta{font-size:11px;color:#333;font-weight:800;line-height:1.6}
+      .printGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+      table{font-size:11px}
+      th,td{padding:6px}
     }
   </style>
 </head>
@@ -173,184 +228,61 @@
     <div class="brand">
       <div class="logo">OFA</div>
       <div>
-        <h1>OFA 拠点別 売上・委託・利益 月次管理</h1>
-        <div class="sub">拠点別に入力 → 自動集計（利益/利益率/インセン）→ PDF/CSV → LINE送付運用OK</div>
+        <h1>OFA 月次 売上管理（拠点別）</h1>
+        <div class="sub">入力はシンプルに。計算は全部自動。PDF/CSVでLINE送付。</div>
       </div>
     </div>
     <div class="actions">
-      <button class="btn btn-yellow" id="btnSaveDraft">💾 端末保存</button>
+      <button class="btn btn-yellow" id="btnSaveDraft">💾 保存</button>
       <button class="btn btn-blue" id="btnPDF">🖨️ PDF</button>
       <button class="btn btn-blue" id="btnCSV">⬇️ CSV</button>
-      <button class="btn btn-red" id="btnResetDraft">🧹 入力クリア</button>
+      <button class="btn btn-red" id="btnClear">🧹 クリア</button>
     </div>
   </div>
 
   <div class="tabs no-print">
-    <div class="tab active" data-tab="dashboard">拠点別一覧（本部確認）</div>
-    <div class="tab" data-tab="input">入力（現地/営業/FC）</div>
-    <div class="tab" data-tab="master">単価マスター</div>
+    <div class="tab active" data-tab="input">入力（現地/営業/FC）</div>
+    <div class="tab" data-tab="board">本部一覧（拠点別）</div>
+    <div class="tab" data-tab="master">マスター（単価）</div>
     <div class="tab" data-tab="history">履歴</div>
-    <div class="tab" data-tab="help">使い方</div>
   </div>
 
-  <!-- ===================== Dashboard ===================== -->
-  <section id="tab-dashboard">
+  <!-- ===================== INPUT ===================== -->
+  <section id="tab-input">
+
+    <div class="card no-print">
+      <div class="toggleBox">
+        <div class="pill pill-blue">入力モード</div>
+        <select id="uiMode" style="max-width:320px">
+          <option value="simple">超簡単（売上金額 + 委託請求金額だけ）</option>
+          <option value="normal">通常（個数×単価で自動計算も使う）</option>
+        </select>
+        <div class="muted">迷う人は「超簡単」。慣れたら「通常」で個建も自動化。</div>
+      </div>
+    </div>
 
     <div class="card">
-      <h2>① 月次フィルタ</h2>
+      <div class="step"><div class="badge">1</div><h2>基本情報（拠点レポート）</h2></div>
       <div class="row cols5">
-        <div>
-          <label>対象月</label>
-          <input type="month" id="dashMonth">
-        </div>
-        <div>
-          <label>表示（都道府県）</label>
-          <select id="dashPref">
-            <option value="">すべて</option>
-          </select>
-        </div>
-        <div>
-          <label>表示（入力者区分）</label>
-          <select id="dashRole">
-            <option value="">すべて</option>
-            <option value="エリアマネ（現地）">エリアマネ（現地）</option>
-            <option value="営業（本部/FC管理）">営業（本部/FC管理）</option>
-            <option value="フランチャイズ（FC）">フランチャイズ（FC）</option>
-          </select>
-        </div>
-        <div>
-          <label>表示（拠点）</label>
-          <input id="dashBase" placeholder="部分一致で絞り込み">
-        </div>
-        <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap">
-          <button class="btn btn-green" id="btnDashPrint">🖨️ この一覧をPDF</button>
-          <button class="btn" id="btnDashRefresh">🔄 更新</button>
-        </div>
-      </div>
-      <div class="muted" style="margin-top:8px">
-        ※ “掛け持ち拠点” でもOK：同じ月に複数拠点レポートが並び、拠点別の売上/利益/利益率が一覧化されます。
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>② 拠点別 集計（黒/赤/緑で即判断）</h2>
-
-      <div class="kpiRow">
-        <div class="kpi">
-          <div class="t">売上合計（税抜）</div>
-          <div class="v num" id="dashKpiSalesEx">0</div>
-          <div class="s">拠点合算</div>
-        </div>
-        <div class="kpi">
-          <div class="t">委託合計（税抜）</div>
-          <div class="v num" id="dashKpiOutEx">0</div>
-          <div class="s">拠点合算</div>
-        </div>
-        <div class="kpi">
-          <div class="t">粗利（税抜）</div>
-          <div class="v num" id="dashKpiGrossEx">0</div>
-          <div class="s">プラス緑 / マイナス赤</div>
-        </div>
-        <div class="kpi">
-          <div class="t">粗利率</div>
-          <div class="v num blue" id="dashKpiRate">0.0%</div>
-          <div class="s">税抜ベース</div>
-        </div>
-      </div>
-
-      <div class="hr"></div>
-
-      <div class="tableWrap">
-        <table>
-          <thead>
-            <tr>
-              <th>対象月</th>
-              <th>都道府県</th>
-              <th>拠点名</th>
-              <th>入力者区分</th>
-              <th>報告者</th>
-              <th>営業担当</th>
-              <th class="right">売上(税抜)</th>
-              <th class="right">委託(税抜)</th>
-              <th class="right">粗利(税抜)</th>
-              <th class="right">粗利率</th>
-              <th class="right">拠点責任者インセン</th>
-              <th class="right">営業インセン</th>
-              <th class="center no-print">編集</th>
-            </tr>
-          </thead>
-          <tbody id="dashTbody"></tbody>
-        </table>
-      </div>
-
-      <div class="muted" style="margin-top:8px">
-        ※ “編集” で該当拠点を呼び出し → 修正 → PDF/CSV → LINE送付。
-      </div>
-    </div>
-
-  </section>
-
-  <!-- ===================== Input ===================== -->
-  <section id="tab-input" style="display:none">
-
-    <div class="card">
-      <h2>① 拠点レポートを選択（掛け持ち対応）</h2>
-      <div class="row cols4">
-        <div>
-          <label>現在の拠点レポート</label>
-          <select id="reportSelect"></select>
-        </div>
-        <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap">
-          <button class="btn btn-yellow no-print" id="btnAddReport">＋ 拠点レポート追加</button>
-          <button class="btn btn-red no-print" id="btnDeleteReport">🗑️ この拠点を削除</button>
-        </div>
-        <div>
-          <label>入力モード</label>
-          <select id="uiMode">
-            <option value="normal">通常（売上+委託+単価/個数）</option>
-            <option value="simple">超簡単（売上と請求金額だけ）</option>
-          </select>
-        </div>
-        <div class="muted">
-          超簡単モードは、<b>計算できない担当でも迷わない</b>仕様。<br>
-          （単価/個数は省略し、金額入力に寄せます）
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>② 基本情報（計算不要）</h2>
-      <div class="row cols6">
         <div>
           <label>対象月</label>
           <input type="month" id="month">
         </div>
         <div>
-          <label>入力者区分</label>
-          <select id="role">
-            <option value="エリアマネ（現地）">エリアマネ（現地）</option>
-            <option value="営業（本部/FC管理）">営業（本部/FC管理）</option>
-            <option value="フランチャイズ（FC）">フランチャイズ（FC）</option>
-          </select>
+          <label>都道府県</label>
+          <select id="pref"></select>
+        </div>
+        <div>
+          <label>拠点名</label>
+          <input id="base" placeholder="例：福岡市内 / 東京（足立）">
         </div>
         <div>
           <label>報告者（拠点責任者）</label>
           <input id="reporter" placeholder="例：森下 / ○○FC店">
         </div>
         <div>
-          <label>営業担当（本部/FC管理）</label>
+          <label>営業担当</label>
           <input id="salesRep" placeholder="例：本部 太田 / ○○営業">
-        </div>
-        <div>
-          <label>都道府県</label>
-          <select id="pref">
-            <option value="">選択</option>
-          </select>
-          <div class="muted">※「エリア外/本部営業」も選べます</div>
-        </div>
-        <div>
-          <label>拠点名</label>
-          <input id="base" placeholder="例：福岡市内 / 東京（足立）">
         </div>
       </div>
 
@@ -360,31 +292,24 @@
         <div>
           <label>目標（任意）</label>
           <input id="goal" placeholder="例：粗利率15% / 月粗利100万">
-          <div class="muted">※ただやらせる入力ではなく、<b>目標達成のための数字管理</b>に。</div>
         </div>
         <div>
           <label>消費税率（%）</label>
-          <input id="taxRate" inputmode="decimal" placeholder="例：10">
+          <input id="taxRate" inputmode="decimal" placeholder="10">
         </div>
         <div>
-          <label>売上 金額入力モード</label>
-          <select id="salesMode">
-            <option value="ex">税抜で入力</option>
-            <option value="in">税込で入力</option>
-          </select>
+          <label>粗利率アラート（% 以下で赤）</label>
+          <input id="alertRate" inputmode="decimal" placeholder="5">
         </div>
         <div>
           <label>メモ（任意）</label>
-          <input id="memo" placeholder="例：増員/繁忙/前年差要因など">
+          <input id="memo" placeholder="例：前年差要因/増員/繁忙など">
         </div>
       </div>
-    </div>
 
-    <div class="card">
-      <h2>③ インセン設定（0.3%）</h2>
-      <div class="muted">拠点責任者（報告者）と営業担当は別。計算は自動です。</div>
+      <div class="hr"></div>
 
-      <div class="row cols4" style="margin-top:10px">
+      <div class="row cols4">
         <div>
           <label>拠点責任者インセン（%）</label>
           <input id="mgrPct" inputmode="decimal" placeholder="0.3">
@@ -399,35 +324,33 @@
             <option value="gross">利益（粗利）ベース</option>
             <option value="sales">売上ベース</option>
           </select>
-          <div class="muted">※要望の「利益ベースに変更」対応</div>
         </div>
         <div>
           <label>上限/下限（任意）</label>
           <div class="row cols2">
-            <div>
-              <input id="incMin" inputmode="decimal" placeholder="下限(円) 例：0">
-            </div>
-            <div>
-              <input id="incMax" inputmode="decimal" placeholder="上限(円) 例：50000">
-            </div>
+            <input id="incMin" inputmode="decimal" placeholder="下限(円) 例：0">
+            <input id="incMax" inputmode="decimal" placeholder="上限(円) 例：50000">
           </div>
-          <div class="muted">※0なら実質無制限</div>
         </div>
+      </div>
+
+      <div class="muted" style="margin-top:8px">
+        ※インセンは拠点ごとに自動。上限/下限は必要な拠点だけ設定OK。
       </div>
     </div>
 
-    <div class="card" id="card-sales">
-      <h2>④ 売上入力（取引先 × 金額）</h2>
-      <div class="muted">
-        取引先はマスター登録 → ここでは<b>選ぶだけ</b>。金額は税抜/税込モードに合わせて入力。
-      </div>
+    <div class="card">
+      <div class="step"><div class="badge">2</div><h2>売上（取引先）</h2></div>
+      <div class="muted">超簡単：金額だけ。通常：<b>個数×売上単価</b>も使えます（マスター登録）。</div>
 
-      <div style="margin-top:10px" class="tableWrap">
+      <div class="tableWrap" style="margin-top:10px">
         <table>
           <thead>
             <tr>
-              <th style="min-width:220px">取引先（発注/荷主）</th>
-              <th class="right">入力金額</th>
+              <th style="min-width:220px">取引先</th>
+              <th class="right colSalesPieces">個数</th>
+              <th class="right colSalesUnit">売上単価（税抜）</th>
+              <th class="right">売上金額（入力/自動）</th>
               <th class="right">税抜</th>
               <th class="right">税込</th>
               <th class="center">削除</th>
@@ -438,26 +361,22 @@
       </div>
 
       <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap" class="no-print">
-        <button class="btn btn-yellow" id="btnAddSale">＋ 売上行を追加（無限）</button>
+        <button class="btn btn-yellow" id="btnAddSale">＋ 売上行を追加</button>
       </div>
     </div>
 
-    <div class="card" id="card-outs">
-      <h2>⑤ 委託入力（委託会社 × 地域 × 個数/請求金額）</h2>
+    <div class="card">
+      <div class="step"><div class="badge">3</div><h2>委託（請求）</h2></div>
+      <div class="muted">超簡単：請求金額だけ。通常：<b>個数×委託単価</b>も使えます（マスター登録）。</div>
 
-      <div class="muted">
-        通常モード：<b>荷物個数</b>を入れると <b>単価マスター</b> を読んで自動計算（個建/出来高向け）。<br>
-        超簡単モード：<b>請求金額だけ</b>入れればOK（計算不要の人向け）。
-      </div>
-
-      <div style="margin-top:10px" class="tableWrap">
+      <div class="tableWrap" style="margin-top:10px">
         <table>
           <thead>
             <tr>
               <th style="min-width:220px">委託会社</th>
-              <th style="min-width:180px">担当地域</th>
-              <th class="right col-pieces">荷物個数</th>
-              <th class="right col-unit">単価（税抜）</th>
+              <th style="min-width:170px">担当地域</th>
+              <th class="right colOutPieces">個数</th>
+              <th class="right colOutUnit">委託単価（税抜）</th>
               <th class="right">請求金額（入力/自動）</th>
               <th class="right">税抜</th>
               <th class="right">税込</th>
@@ -474,78 +393,56 @@
     </div>
 
     <div class="card no-print">
-      <h2>⑥ 請求書読み込み（①OCR貼付 / ②PDF読込）</h2>
+      <div class="step"><div class="badge">4</div><h2>請求書OCR / PDF読み込み（候補選択UI）</h2></div>
       <div class="muted">
-        ✅ ① スマホで請求書を撮影 → 文字認識（OCR）→ コピー → 貼り付け → 自動で行追加<br>
-        ✅ ② PDF請求書（テキスト埋め込み）→ 自動で文字抽出 → ①に流し込み → 自動追加<br>
-        ※画像だけのPDF（スキャン）は②で読めません → ①で対応
+        ✅ OCRテキストを貼り付け → <b>金額候補が複数なら選択</b> → 売上/委託に追加<br>
+        ✅ PDF（テキスト埋め込み）も抽出→同様に候補選択
       </div>
 
       <div class="hr"></div>
 
       <div class="row cols2">
         <div>
-          <label>貼り付け欄（OCRテキスト）</label>
-          <textarea id="invoiceText" placeholder="ここに貼り付け"></textarea>
+          <label>OCRテキスト貼り付け</label>
+          <textarea id="invoiceText" placeholder="スマホOCRでコピーした文字を貼り付け"></textarea>
           <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn btn-yellow" id="btnParseInvoiceText">🔎 解析して追加</button>
-            <button class="btn" id="btnClearInvoiceText">🧹 クリア</button>
-          </div>
-          <div class="muted" style="margin-top:8px">
-            ヒント：キーワード “支払/委託/請求/精算” が多いと「委託」判定になりやすいです。
+            <button class="btn btn-yellow" id="btnAnalyzeText">🔎 解析（候補表示）</button>
+            <button class="btn btn-ghost" id="btnClearText">🧹 クリア</button>
           </div>
         </div>
 
         <div>
-          <label>PDFを選択（テキスト埋め込み請求書）</label>
+          <label>PDF選択（テキスト埋め込みのみ）</label>
           <input type="file" id="pdfFile" accept="application/pdf">
           <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn btn-blue" id="btnParsePDF">📄 PDFを解析して追加</button>
+            <button class="btn btn-blue" id="btnAnalyzePDF">📄 PDF解析（候補表示）</button>
           </div>
-
-          <div class="hr"></div>
-
-          <label>解析プレビュー（先頭20件）</label>
-          <div class="tableWrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>判定</th>
-                  <th>取引先候補</th>
-                  <th class="right">金額候補</th>
-                  <th class="right">個数候補</th>
-                </tr>
-              </thead>
-              <tbody id="invoicePreviewTbody"></tbody>
-            </table>
+          <div class="muted" style="margin-top:8px">
+            ※画像PDF（スキャン）は抽出不可 → OCR貼付で対応
           </div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <h2>⑦ 集計（拠点単位）</h2>
+      <div class="step"><div class="badge">5</div><h2>確認（自動集計）</h2></div>
 
       <div class="kpiRow">
         <div class="kpi">
-          <div class="t">売上合計</div>
-          <div class="v num" id="kpiSales">0</div>
-          <div class="s">税抜/税込</div>
+          <div class="t">売上合計（税抜）</div>
+          <div class="v num" id="kSalesEx">0</div>
         </div>
         <div class="kpi">
-          <div class="t">委託合計</div>
-          <div class="v num" id="kpiOut">0</div>
-          <div class="s">税抜/税込</div>
+          <div class="t">委託合計（税抜）</div>
+          <div class="v num" id="kOutEx">0</div>
         </div>
         <div class="kpi">
-          <div class="t">粗利（= 売上 − 委託）</div>
-          <div class="v num" id="kpiGross">0</div>
-          <div class="s">プラス緑 / マイナス赤</div>
+          <div class="t">粗利（税抜）</div>
+          <div class="v num" id="kGrossEx">0</div>
         </div>
         <div class="kpi">
           <div class="t">粗利率</div>
-          <div class="v num blue" id="kpiRate">0.0%</div>
-          <div class="s">税抜ベース</div>
+          <div class="v num blue" id="kRate">0.0%</div>
         </div>
       </div>
 
@@ -554,96 +451,141 @@
       <div class="row cols3">
         <div class="kpi">
           <div class="t">拠点責任者インセン</div>
-          <div class="v num" id="kpiMgrInc">0</div>
-          <div class="s">0.3%（設定可）</div>
+          <div class="v num" id="kMgrInc">0</div>
         </div>
         <div class="kpi">
           <div class="t">営業インセン</div>
-          <div class="v num" id="kpiSalesInc">0</div>
-          <div class="s">0.3%（設定可）</div>
+          <div class="v num" id="kSalesInc">0</div>
         </div>
         <div class="kpi">
-          <div class="t">異常値アラート</div>
-          <div class="v" id="kpiAlert">
-            <span class="pill pill-green">OK</span>
-          </div>
-          <div class="s">粗利率が閾値以下で赤</div>
+          <div class="t">アラート</div>
+          <div class="v" id="kAlert"><span class="pill pill-green">OK</span></div>
         </div>
       </div>
 
       <div class="hr"></div>
 
-      <div class="row cols4 no-print">
-        <div>
-          <label>アラート閾値（粗利率% 以下で赤）</label>
-          <input id="alertRate" inputmode="decimal" placeholder="例：5">
-          <div class="muted">例：5 を入れると粗利率 5% 以下は赤表示</div>
-        </div>
-        <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap">
-          <button class="btn btn-green" id="btnSaveHistory">📌 この拠点を履歴保存</button>
-          <button class="btn btn-blue" id="btnGoDash">🏢 本部一覧へ反映</button>
-        </div>
-        <div class="muted" style="grid-column: span 2;">
-          保存→PDF/CSV出力→LINE送付の運用でOK（本部へ“飛ばさない”運用に合わせています）。
-        </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap" class="no-print">
+        <button class="btn btn-green" id="btnSaveHistory">📌 履歴保存</button>
+        <button class="btn btn-yellow" id="btnGoBoard">🏢 本部一覧へ</button>
+      </div>
+      <div class="muted" style="margin-top:8px">
+        ※運用：履歴保存 → PDF/CSV → LINE送付
       </div>
     </div>
 
   </section>
 
-  <!-- ===================== Master ===================== -->
-  <section id="tab-master" style="display:none">
+  <!-- ===================== BOARD ===================== -->
+  <section id="tab-board" style="display:none">
+
     <div class="card">
-      <h2>単価マスター（選ぶだけ運用）</h2>
+      <h2>本部一覧（拠点別）</h2>
+      <div class="row cols4 no-print">
+        <div>
+          <label>対象月</label>
+          <input type="month" id="boardMonth">
+        </div>
+        <div>
+          <label>都道府県</label>
+          <select id="boardPref"></select>
+        </div>
+        <div>
+          <label>拠点検索</label>
+          <input id="boardBaseQ" placeholder="部分一致で絞り込み">
+        </div>
+        <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap">
+          <button class="btn btn-blue" id="btnBoardRefresh">🔄 更新</button>
+          <button class="btn btn-green" id="btnBoardPrint">🖨️ 一覧をPDF</button>
+        </div>
+      </div>
+
+      <div class="tableWrap" style="margin-top:10px">
+        <table>
+          <thead>
+            <tr>
+              <th>対象月</th>
+              <th>都道府県</th>
+              <th>拠点</th>
+              <th>報告者</th>
+              <th>営業</th>
+              <th class="right">売上(税抜)</th>
+              <th class="right">委託(税抜)</th>
+              <th class="right">粗利(税抜)</th>
+              <th class="right">粗利率</th>
+              <th class="right">責任者インセン</th>
+              <th class="right">営業インセン</th>
+              <th class="center no-print">編集</th>
+            </tr>
+          </thead>
+          <tbody id="boardTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ===================== MASTER ===================== -->
+  <section id="tab-master" style="display:none">
+
+    <div class="card">
+      <h2>マスター（選ぶだけ運用）</h2>
       <div class="muted">
-        ここで登録した内容が「入力」で<b>選ぶだけ</b>になります。<br>
-        ・取引先（売上）<br>
-        ・委託会社（請求）<br>
-        ・担当地域（エリア）<br>
-        ・単価マスター（委託会社×担当地域→単価 税抜）
+        ✅ 売上単価マスター：取引先×単価（税抜） → 個数入力で売上自動<br>
+        ✅ 委託単価マスター：委託会社×地域×単価（税抜） → 個数入力で委託自動
       </div>
 
       <div class="hr"></div>
 
-      <div class="row cols3">
+      <div class="row cols2">
         <div>
-          <h3>① 取引先（売上）</h3>
-          <div style="display:flex;gap:8px">
-            <input id="newClient" placeholder="例：Amazon / ヤマト / 佐川 / SHEIN">
-            <button class="btn btn-yellow" id="btnAddClient">追加</button>
+          <h2 style="margin-top:0">① 取引先（売上）</h2>
+          <div class="row cols2">
+            <div>
+              <label>取引先名</label>
+              <input id="newClientName" placeholder="例：Amazon / ヤマト / 佐川">
+            </div>
+            <div>
+              <label>売上単価（税抜）</label>
+              <input id="newClientUnit" inputmode="decimal" placeholder="例：180">
+            </div>
           </div>
+          <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-yellow" id="btnAddClient">＋ 追加</button>
+          </div>
+
           <div class="tableWrap" style="margin-top:10px">
             <table>
-              <thead><tr><th>取引先名</th><th class="center">削除</th></tr></thead>
+              <thead><tr><th>取引先</th><th class="right">売上単価(税抜)</th><th class="center">削除</th></tr></thead>
               <tbody id="clientTbody"></tbody>
             </table>
           </div>
         </div>
 
         <div>
-          <h3>② 委託会社（請求）</h3>
-          <div style="display:flex;gap:8px">
-            <input id="newVendor" placeholder="例：DARUMA / ブルーミー / Lifes">
-            <button class="btn btn-yellow" id="btnAddVendor">追加</button>
+          <h2 style="margin-top:0">② 委託単価（委託会社×地域）</h2>
+          <div class="row cols3">
+            <div>
+              <label>委託会社</label>
+              <input id="newVendor" placeholder="例：DARUMA">
+            </div>
+            <div>
+              <label>担当地域</label>
+              <input id="newArea" placeholder="例：福岡市内">
+            </div>
+            <div>
+              <label>委託単価（税抜）</label>
+              <input id="newOutUnit" inputmode="decimal" placeholder="例：160">
+            </div>
           </div>
-          <div class="tableWrap" style="margin-top:10px">
-            <table>
-              <thead><tr><th>委託会社</th><th class="center">削除</th></tr></thead>
-              <tbody id="vendorTbody"></tbody>
-            </table>
+          <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-yellow" id="btnAddOutPrice">＋ 追加</button>
           </div>
-        </div>
 
-        <div>
-          <h3>③ 担当地域</h3>
-          <div style="display:flex;gap:8px">
-            <input id="newArea" placeholder="例：福岡市内 / 東京（足立） / 鹿児島">
-            <button class="btn btn-yellow" id="btnAddArea">追加</button>
-          </div>
           <div class="tableWrap" style="margin-top:10px">
             <table>
-              <thead><tr><th>担当地域</th><th class="center">削除</th></tr></thead>
-              <tbody id="areaTbody"></tbody>
+              <thead><tr><th>委託会社</th><th>地域</th><th class="right">委託単価(税抜)</th><th class="center">削除</th></tr></thead>
+              <tbody id="outPriceTbody"></tbody>
             </table>
           </div>
         </div>
@@ -651,91 +593,140 @@
 
       <div class="hr"></div>
 
-      <h3>④ 単価マスター（委託会社 × 担当地域 → 単価）</h3>
-      <div class="muted">※単価は <b>税抜</b> で登録（消費税は入力側で計算）。個建/出来高の自動計算に使用。</div>
-
-      <div style="margin-top:10px" class="tableWrap">
-        <table>
-          <thead>
-            <tr>
-              <th style="min-width:220px">委託会社</th>
-              <th style="min-width:180px">担当地域</th>
-              <th class="right">単価（税抜）</th>
-              <th class="center">削除</th>
-            </tr>
-          </thead>
-          <tbody id="priceTbody"></tbody>
-        </table>
-      </div>
-
-      <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap" class="no-print">
-        <button class="btn btn-yellow" id="btnAddPrice">＋ 単価行を追加（無限）</button>
-      </div>
-
-      <div class="hr"></div>
       <div class="no-print" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
         <button class="btn btn-green" id="btnSaveMaster">💾 マスター保存</button>
         <button class="btn btn-red" id="btnResetMaster">🧨 マスター初期化</button>
-        <span class="muted">※端末内（localStorage）保存。全員に配る場合はCSVで共有運用が現実的です。</span>
+        <span class="muted">※端末内保存。全員統一は“マスターCSV共有”運用が確実。</span>
       </div>
     </div>
+
   </section>
 
-  <!-- ===================== History ===================== -->
+  <!-- ===================== HISTORY ===================== -->
   <section id="tab-history" style="display:none">
+
     <div class="card">
-      <h2>履歴（端末内保存）</h2>
-      <div class="muted">
-        保存した拠点レポートを呼び出して編集 → PDF/CSV → LINE送付できます。<br>
-        ※「月次」「拠点別」運用に最適化。
-      </div>
-
-      <div class="hr"></div>
-
-      <div class="row cols4">
+      <h2>履歴（端末内）</h2>
+      <div class="row cols3 no-print">
         <div>
-          <label>保存済み一覧</label>
+          <label>保存済み</label>
           <select id="historySelect"></select>
         </div>
-        <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap" class="no-print">
+        <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap">
           <button class="btn btn-yellow" id="btnLoadHistory">呼び出し</button>
           <button class="btn btn-red" id="btnDeleteHistory">削除</button>
         </div>
-        <div class="muted" style="grid-column: span 2;">
-          ✅ 修正したいとき：履歴→呼び出し→直す→PDF/CSV
+      </div>
+      <div class="muted" style="margin-top:8px">
+        ※履歴→呼び出し→修正→PDF/CSV が可能
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ===================== PRINT AREA ===================== -->
+  <div class="printArea">
+    <div class="printCard">
+      <div class="printTitle">OFA 月次 売上管理（拠点レポート）</div>
+      <div class="printMeta" id="printMeta"></div>
+      <div class="printGrid">
+        <div>
+          <div class="printTitle" style="font-size:12px">集計</div>
+          <div class="printMeta" id="printKpis"></div>
+        </div>
+        <div>
+          <div class="printTitle" style="font-size:12px">目標 / メモ</div>
+          <div class="printMeta" id="printGoalMemo"></div>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- ===================== Help ===================== -->
-  <section id="tab-help" style="display:none">
-    <div class="card">
-      <h2>使い方（最短）</h2>
-      <ol class="muted">
-        <li><b>単価マスター</b>で「取引先 / 委託会社 / 地域 / 単価」を登録</li>
-        <li><b>入力</b>で「対象月・都道府県・拠点名・報告者・営業担当」を入力</li>
-        <li>売上（取引先×金額）と委託（委託会社×地域×個数/請求）を入力（行は無限に追加）</li>
-        <li>集計（売上/委託/粗利/粗利率/インセン/アラート）を確認</li>
-        <li><b>PDF</b>で印刷→LINEで送付、または<b>CSV</b>で送付</li>
-        <li>掛け持ち拠点は「拠点レポート追加」で複数拠点を作り、最後に<b>拠点別一覧</b>で本部確認</li>
-      </ol>
-      <div class="muted">
-        ※請求書自動入力：スマホOCRで文字コピー→「OCR貼付」→解析で行追加。PDFは“テキスト埋め込み”のみ対応。
+    <div class="printCard">
+      <div class="printTitle">売上（取引先）</div>
+      <div class="tableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th>取引先</th><th class="right">個数</th><th class="right">単価(税抜)</th><th class="right">税抜</th>
+            </tr>
+          </thead>
+          <tbody id="printSalesTbody"></tbody>
+        </table>
       </div>
     </div>
-  </section>
 
+    <div class="printCard">
+      <div class="printTitle">委託（請求）</div>
+      <div class="tableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th>委託会社</th><th>地域</th><th class="right">個数</th><th class="right">単価(税抜)</th><th class="right">税抜</th>
+            </tr>
+          </thead>
+          <tbody id="printOutTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== OCR MODAL ===================== -->
+<div class="modalBg" id="modalBg">
+  <div class="modal">
+    <div class="modalHead">
+      <div class="title">金額候補を選んで確定</div>
+      <button class="btn btn-ghost" id="btnCloseModal">✖</button>
+    </div>
+    <div class="modalBody">
+      <div class="row cols2">
+        <div>
+          <label>分類（追加先）</label>
+          <select id="modalType">
+            <option value="out">委託（請求）に追加</option>
+            <option value="sales">売上に追加</option>
+          </select>
+          <div class="muted">OCRの内容で判定もしますが、ここで変更できます。</div>
+        </div>
+        <div>
+          <label>取引先/委託会社（任意）</label>
+          <select id="modalParty"></select>
+          <div class="muted">空でもOK（後で手入力可）</div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+      <div class="muted">候補（タップで確定）</div>
+      <div id="amountChoices" style="margin-top:10px"></div>
+
+      <div class="hr"></div>
+      <div class="row cols2">
+        <div>
+          <label>個数候補（あれば）</label>
+          <input id="modalPieces" inputmode="numeric" placeholder="例：14595">
+          <div class="muted">個建なら入れると自動計算に使えます（通常モード時）</div>
+        </div>
+        <div>
+          <label>地域（委託のとき任意）</label>
+          <input id="modalArea" placeholder="例：福岡市内">
+        </div>
+      </div>
+    </div>
+    <div class="modalFoot">
+      <button class="btn btn-red" id="btnModalCancel">キャンセル</button>
+    </div>
+  </div>
 </div>
 
 <script>
 (() => {
-  // ========= Storage Keys =========
-  const LS_MASTER = "ofa_sales_master_v3";
-  const LS_DRAFT  = "ofa_sales_draft_v3";
-  const LS_HIST   = "ofa_sales_history_v3";
+  // ===== Storage =====
+  const LS_MASTER = "ofa_simple_master_v1";
+  const LS_DRAFT  = "ofa_simple_draft_v1";
+  const LS_HIST   = "ofa_simple_hist_v1";
 
-  // ========= Utilities =========
+  // ===== Utils =====
   const $ = (id)=>document.getElementById(id);
   const esc = (s)=>String(s??"").replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   const num = (v)=> {
@@ -745,7 +736,7 @@
   };
   const yen = (n)=> (Number(n)||0).toLocaleString("ja-JP");
   const pct = (v)=> (v*100).toFixed(1) + "%";
-  const clamp = (x, min, max)=> Math.min(Math.max(x, min), max);
+  const clamp = (x,min,max)=>Math.min(Math.max(x,min),max);
 
   function nowMonth(){
     const d = new Date();
@@ -766,192 +757,150 @@
     "エリア外/本部営業"
   ];
 
-  // ========= State =========
-  const state = {
-    master: {
-      clients: ["Amazon","ヤマト","佐川","SHEIN","フェリシモ"],
-      vendors: ["DARUMA","ブルーミー","Lifes"],
-      areas: ["福岡市内","東京（足立）","鹿児島"],
-      prices: [
-        {vendor:"DARUMA", area:"福岡市内", unit:200},
-        {vendor:"ブルーミー", area:"東京（足立）", unit:170},
-      ],
-    },
-    draft: {
-      uiMode: "normal",
-      currentReportId: "",
-      reports: [
-        // {id, month, role, reporter, salesRep, pref, base, goal, memo, taxRate, salesMode, mgrPct, salesPct, incBase, incMin, incMax, alertRate, sales[], outs[]}
-      ]
-    },
-    history: [] // {id, savedAt, snapshotReport}
-  };
-
   function uid(){
     return (crypto?.randomUUID ? crypto.randomUUID() : String(Date.now()) + "_" + Math.random().toString(16).slice(2));
   }
 
-  function defaultReport(){
-    return {
-      id: uid(),
-      month: nowMonth(),
-      role: "エリアマネ（現地）",
-      reporter: "",
-      salesRep: "",
-      pref: "",
-      base: "",
-      goal: "",
-      memo: "",
-      taxRate: 10,
-      salesMode: "ex", // ex/in
-      mgrPct: 0.3,
-      salesPct: 0.3,
-      incBase: "gross", // gross/sales
-      incMin: 0,
-      incMax: 0,
-      alertRate: 5, // %
-      sales: [{client:"", inputAmount:""}],
-      outs: [{vendor:"", area:"", pieces:"", unit:0, inputAmount:""}]
-    };
-  }
+  // ===== State =====
+  const state = {
+    master:{
+      // clients: {name, unitEx}
+      clients:[
+        {name:"Amazon", unitEx:180},
+        {name:"ヤマト", unitEx:180},
+        {name:"佐川", unitEx:180}
+      ],
+      // outsource: {vendor, area, unitEx}
+      outPrices:[
+        {vendor:"DARUMA", area:"福岡市内", unitEx:160},
+        {vendor:"ブルーミー", area:"東京（足立）", unitEx:170},
+      ],
+    },
+    draft:{
+      uiMode:"simple", // simple / normal
+      report:{
+        month: nowMonth(),
+        pref:"",
+        base:"",
+        reporter:"",
+        salesRep:"",
+        goal:"",
+        memo:"",
+        taxRate:10,
+        alertRate:5,
+        mgrPct:0.3,
+        salesPct:0.3,
+        incBase:"gross",
+        incMin:0,
+        incMax:0,
 
-  function getCurrentReport(){
-    const id = state.draft.currentReportId;
-    return state.draft.reports.find(r=>r.id===id) || null;
-  }
+        sales:[{client:"", pieces:"", inputAmount:""}],  // inputAmount is ex (simple) OR manual ex
+        outs:[{vendor:"", area:"", pieces:"", inputAmount:""}], // inputAmount ex
+      }
+    },
+    hist:[]
+  };
 
-  // ========= Load/Save =========
   function loadAll(){
-    try{
-      const m = localStorage.getItem(LS_MASTER);
-      if(m) state.master = JSON.parse(m);
-    }catch(e){}
-    try{
-      const d = localStorage.getItem(LS_DRAFT);
-      if(d) state.draft = JSON.parse(d);
-    }catch(e){}
-    try{
-      const h = localStorage.getItem(LS_HIST);
-      if(h) state.history = JSON.parse(h);
-    }catch(e){}
+    try{ const m = localStorage.getItem(LS_MASTER); if(m) state.master = JSON.parse(m); }catch(e){}
+    try{ const d = localStorage.getItem(LS_DRAFT); if(d) state.draft = JSON.parse(d); }catch(e){}
+    try{ const h = localStorage.getItem(LS_HIST); if(h) state.hist = JSON.parse(h); }catch(e){}
   }
   function saveMaster(){ localStorage.setItem(LS_MASTER, JSON.stringify(state.master)); }
   function saveDraft(){ localStorage.setItem(LS_DRAFT, JSON.stringify(state.draft)); }
-  function saveHistory(){ localStorage.setItem(LS_HIST, JSON.stringify(state.history)); }
+  function saveHist(){ localStorage.setItem(LS_HIST, JSON.stringify(state.hist)); }
 
-  // ========= Tabs =========
+  // ===== Tabs =====
   function setTab(name){
-    ["dashboard","input","master","history","help"].forEach(t=>{
+    ["input","board","master","history"].forEach(t=>{
       $("tab-"+t).style.display = (t===name) ? "" : "none";
     });
     document.querySelectorAll(".tab").forEach(el=>{
       el.classList.toggle("active", el.dataset.tab===name);
     });
+    if(name==="board") renderBoard();
   }
   document.querySelectorAll(".tab").forEach(el=>{
     el.addEventListener("click", ()=>setTab(el.dataset.tab));
   });
 
-  // ========= Master Lookups =========
-  function getUnitPrice(vendor, area){
-    const hit = (state.master.prices||[]).find(p=>p.vendor===vendor && p.area===area);
-    return hit ? Number(hit.unit||0) : 0;
-  }
-
-  // ========= Pref Select Build =========
-  function buildPrefSelect(sel){
-    sel.innerHTML = `<option value="">選択</option>` + PREFS.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join("");
-  }
-
-  // ========= Render Report Select =========
-  function renderReportSelect(){
-    const sel = $("reportSelect");
-    sel.innerHTML = "";
-    if(!state.draft.reports.length){
-      state.draft.reports.push(defaultReport());
-    }
-    if(!state.draft.currentReportId){
-      state.draft.currentReportId = state.draft.reports[0].id;
-    }
-    state.draft.reports.forEach(r=>{
-      const label = `${r.month||"未設定"} / ${r.pref||"未設定"} ${r.base||""} / 報告:${r.reporter||""}`;
+  // ===== Pref Select =====
+  function buildPrefSelect(sel, withAll=false){
+    sel.innerHTML = withAll ? `<option value="">すべて</option>` : `<option value="">選択</option>`;
+    PREFS.forEach(p=>{
       const op = document.createElement("option");
-      op.value = r.id;
-      op.textContent = label;
+      op.value = p; op.textContent = p;
       sel.appendChild(op);
     });
-    sel.value = state.draft.currentReportId;
   }
 
-  // ========= Hydrate UI from report =========
-  function hydrateUI(){
-    const r = getCurrentReport();
-    if(!r) return;
-
-    $("uiMode").value = state.draft.uiMode || "normal";
-
-    $("month").value = r.month || nowMonth();
-    $("role").value = r.role || "エリアマネ（現地）";
-    $("reporter").value = r.reporter || "";
-    $("salesRep").value = r.salesRep || "";
-    $("pref").value = r.pref || "";
-    $("base").value = r.base || "";
-    $("goal").value = r.goal || "";
-    $("memo").value = r.memo || "";
-    $("taxRate").value = (r.taxRate ?? 10);
-    $("salesMode").value = r.salesMode || "ex";
-
-    $("mgrPct").value = (r.mgrPct ?? 0.3);
-    $("salesPct").value = (r.salesPct ?? 0.3);
-    $("incBase").value = r.incBase || "gross";
-    $("incMin").value = (r.incMin ?? 0);
-    $("incMax").value = (r.incMax ?? 0);
-    $("alertRate").value = (r.alertRate ?? 5);
-
-    if(!Array.isArray(r.sales)) r.sales = [{client:"", inputAmount:""}];
-    if(!Array.isArray(r.outs)) r.outs = [{vendor:"", area:"", pieces:"", unit:0, inputAmount:""}];
-
-    applyUIMode();
-    renderSales();
-    renderOuts();
-    recalcCurrent();
-    saveDraft();
+  // ===== Master Lookups =====
+  function getClientUnit(name){
+    const c = (state.master.clients||[]).find(x=>x.name===name);
+    return c ? Number(c.unitEx||0) : 0;
+  }
+  function getOutUnit(vendor, area){
+    const o = (state.master.outPrices||[]).find(x=>x.vendor===vendor && x.area===area);
+    return o ? Number(o.unitEx||0) : 0;
   }
 
-  function applyUIMode(){
-    const mode = state.draft.uiMode || "normal";
-    const piecesCols = document.querySelectorAll(".col-pieces");
-    const unitCols = document.querySelectorAll(".col-unit");
-    if(mode==="simple"){
-      piecesCols.forEach(el=>el.style.display="none");
-      unitCols.forEach(el=>el.style.display="none");
+  // ===== UI Mode Columns =====
+  function applyModeColumns(){
+    const m = state.draft.uiMode || "simple";
+    const salesPieces = document.querySelectorAll(".colSalesPieces");
+    const salesUnit = document.querySelectorAll(".colSalesUnit");
+    const outPieces = document.querySelectorAll(".colOutPieces");
+    const outUnit = document.querySelectorAll(".colOutUnit");
+
+    if(m==="simple"){
+      salesPieces.forEach(el=>el.style.display="none");
+      salesUnit.forEach(el=>el.style.display="none");
+      outPieces.forEach(el=>el.style.display="none");
+      outUnit.forEach(el=>el.style.display="none");
     }else{
-      piecesCols.forEach(el=>el.style.display="");
-      unitCols.forEach(el=>el.style.display="");
+      salesPieces.forEach(el=>el.style.display="");
+      salesUnit.forEach(el=>el.style.display="");
+      outPieces.forEach(el=>el.style.display="");
+      outUnit.forEach(el=>el.style.display="");
     }
   }
 
-  // ========= Sales Render =========
+  // ===== Render Sales =====
   function renderSales(){
-    const r = getCurrentReport(); if(!r) return;
+    const r = state.draft.report;
     const tb = $("salesTbody");
-    const opts = state.master.clients.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
-
     const tax = num(r.taxRate)/100;
+    const mode = state.draft.uiMode;
+
+    const clientOpts = (state.master.clients||[])
+      .map(c=>`<option value="${esc(c.name)}">${esc(c.name)}</option>`).join("");
+
     tb.innerHTML = r.sales.map((row,idx)=>{
-      const inputAmount = num(row.inputAmount);
-      const ex = r.salesMode==="ex" ? inputAmount : (tax ? inputAmount/(1+tax) : inputAmount);
-      const inc = r.salesMode==="in" ? inputAmount : ex*(1+tax);
+      const pieces = num(row.pieces);
+      const unit = getClientUnit(row.client);
+      const isAuto = (mode==="normal" && pieces>0 && unit>0);
+      const ex = isAuto ? (pieces * unit) : num(row.inputAmount);
+      const inc = ex*(1+tax);
+
+      const piecesCell = (mode==="simple") ? "" : `
+        <td class="right colSalesPieces">
+          <input class="num" data-s="pieces" data-i="${idx}" inputmode="numeric" placeholder="個数" value="${row.pieces??""}">
+        </td>`;
+      const unitCell = (mode==="simple") ? "" : `<td class="right num colSalesUnit">${yen(Math.round(unit))}</td>`;
+
       return `
         <tr>
           <td>
-            <select data-s-k="client" data-i="${idx}">
+            <select data-s="client" data-i="${idx}">
               <option value="">選択</option>
-              ${opts}
+              ${clientOpts}
             </select>
           </td>
+          ${piecesCell}
+          ${unitCell}
           <td class="right">
-            <input class="num" data-s-k="inputAmount" data-i="${idx}" inputmode="decimal" placeholder="金額" value="${row.inputAmount??""}">
+            <input class="num" data-s="inputAmount" data-i="${idx}" inputmode="decimal"
+                   placeholder="${isAuto ? "自動" : "金額(税抜)"}" value="${isAuto ? "" : (row.inputAmount??"")}">
           </td>
           <td class="right num">${yen(Math.round(ex))}</td>
           <td class="right num">${yen(Math.round(inc))}</td>
@@ -960,84 +909,86 @@
       `;
     }).join("");
 
-    tb.querySelectorAll('select[data-s-k="client"]').forEach(sel=>{
+    // bind
+    tb.querySelectorAll("select[data-s='client']").forEach(sel=>{
       const i = Number(sel.dataset.i);
       sel.value = r.sales[i].client || "";
       sel.addEventListener("change", ()=>{
         r.sales[i].client = sel.value;
-        saveDraft(); recalcCurrent(); renderDashboard();
+        saveDraft(); renderSales(); recalc(); 
       });
     });
-    tb.querySelectorAll('input[data-s-k="inputAmount"]').forEach(inp=>{
+    tb.querySelectorAll("input[data-s='pieces']").forEach(inp=>{
+      const i = Number(inp.dataset.i);
+      inp.addEventListener("input", ()=>{
+        r.sales[i].pieces = inp.value;
+        saveDraft(); renderSales(); recalc();
+      });
+    });
+    tb.querySelectorAll("input[data-s='inputAmount']").forEach(inp=>{
       const i = Number(inp.dataset.i);
       inp.addEventListener("input", ()=>{
         r.sales[i].inputAmount = inp.value;
-        saveDraft(); recalcCurrent(); renderDashboard();
+        saveDraft(); recalc();
       });
       inp.addEventListener("blur", ()=>{
         const v = num(inp.value);
         inp.value = v ? String(v) : "";
         r.sales[i].inputAmount = inp.value;
-        saveDraft(); recalcCurrent(); renderDashboard();
+        saveDraft(); renderSales(); recalc();
       });
     });
-    tb.querySelectorAll('button[data-del-sale]').forEach(btn=>{
+    tb.querySelectorAll("button[data-del-sale]").forEach(btn=>{
       btn.addEventListener("click", ()=>{
         const i = Number(btn.dataset.delSale);
         r.sales.splice(i,1);
-        if(!r.sales.length) r.sales.push({client:"", inputAmount:""});
-        saveDraft(); renderSales(); recalcCurrent(); renderDashboard();
+        if(!r.sales.length) r.sales.push({client:"", pieces:"", inputAmount:""});
+        saveDraft(); renderSales(); recalc();
       });
     });
+
+    applyModeColumns();
   }
 
-  // ========= Outs Render =========
+  // ===== Render Outs =====
   function renderOuts(){
-    const r = getCurrentReport(); if(!r) return;
+    const r = state.draft.report;
     const tb = $("outTbody");
-    const vOpts = state.master.vendors.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");
-    const aOpts = state.master.areas.map(a=>`<option value="${esc(a)}">${esc(a)}</option>`).join("");
-
     const tax = num(r.taxRate)/100;
-    const uiMode = state.draft.uiMode || "normal";
+    const mode = state.draft.uiMode;
+
+    const vendorSet = Array.from(new Set((state.master.outPrices||[]).map(x=>x.vendor))).filter(Boolean);
+    const areaSet = Array.from(new Set((state.master.outPrices||[]).map(x=>x.area))).filter(Boolean);
+
+    const vendorOpts = vendorSet.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");
+    const areaOpts = areaSet.map(a=>`<option value="${esc(a)}">${esc(a)}</option>`).join("");
 
     tb.innerHTML = r.outs.map((row,idx)=>{
       const pieces = num(row.pieces);
-      const unit = num(row.unit);
-      const autoEx = pieces * unit;
-
-      let inputAmount = num(row.inputAmount);
-      // simple mode: treat input as ex by default
-      // normal mode: if pieces present and unit present, auto ex; else manual
-      const isAuto = (uiMode==="normal" && pieces>0 && unit>0);
-
-      const ex = isAuto ? autoEx : inputAmount;
+      const unit = getOutUnit(row.vendor, row.area);
+      const isAuto = (mode==="normal" && pieces>0 && unit>0);
+      const ex = isAuto ? (pieces * unit) : num(row.inputAmount);
       const inc = ex*(1+tax);
 
-      const unitCell = (uiMode==="simple") ? "" : `<td class="right num col-unit">${yen(Math.round(unit))}</td>`;
-      const piecesCell = (uiMode==="simple") ? "" : `
-        <td class="right col-pieces">
-          <input class="num" data-o-k="pieces" data-i="${idx}" inputmode="numeric" placeholder="個数" value="${row.pieces??""}">
+      const piecesCell = (mode==="simple") ? "" : `
+        <td class="right colOutPieces">
+          <input class="num" data-o="pieces" data-i="${idx}" inputmode="numeric" placeholder="個数" value="${row.pieces??""}">
         </td>`;
+      const unitCell = (mode==="simple") ? "" : `<td class="right num colOutUnit">${yen(Math.round(unit))}</td>`;
 
       return `
         <tr>
           <td>
-            <select data-o-k="vendor" data-i="${idx}">
-              <option value="">選択</option>
-              ${vOpts}
-            </select>
+            <input data-o="vendor" data-i="${idx}" placeholder="委託会社" value="${esc(row.vendor||"")}">
           </td>
           <td>
-            <select data-o-k="area" data-i="${idx}">
-              <option value="">選択</option>
-              ${aOpts}
-            </select>
+            <input data-o="area" data-i="${idx}" placeholder="担当地域" value="${esc(row.area||"")}">
           </td>
           ${piecesCell}
           ${unitCell}
           <td class="right">
-            <input class="num" data-o-k="inputAmount" data-i="${idx}" inputmode="decimal" placeholder="${isAuto ? "自動" : "請求"}" value="${isAuto ? "" : (row.inputAmount??"")}">
+            <input class="num" data-o="inputAmount" data-i="${idx}" inputmode="decimal"
+                   placeholder="${isAuto ? "自動" : "請求(税抜)"}" value="${isAuto ? "" : (row.inputAmount??"")}">
           </td>
           <td class="right num">${yen(Math.round(ex))}</td>
           <td class="right num">${yen(Math.round(inc))}</td>
@@ -1047,101 +998,80 @@
     }).join("");
 
     // bind
-    tb.querySelectorAll('select[data-o-k="vendor"]').forEach(sel=>{
-      const i = Number(sel.dataset.i);
-      sel.value = r.outs[i].vendor || "";
-      sel.addEventListener("change", ()=>{
-        r.outs[i].vendor = sel.value;
-        // update unit
-        if(r.outs[i].vendor && r.outs[i].area){
-          r.outs[i].unit = getUnitPrice(r.outs[i].vendor, r.outs[i].area);
-        }
-        saveDraft(); renderOuts(); recalcCurrent(); renderDashboard();
+    tb.querySelectorAll("input[data-o='vendor']").forEach(inp=>{
+      const i = Number(inp.dataset.i);
+      inp.addEventListener("input", ()=>{
+        r.outs[i].vendor = inp.value;
+        saveDraft(); renderOuts(); recalc();
       });
     });
-    tb.querySelectorAll('select[data-o-k="area"]').forEach(sel=>{
-      const i = Number(sel.dataset.i);
-      sel.value = r.outs[i].area || "";
-      sel.addEventListener("change", ()=>{
-        r.outs[i].area = sel.value;
-        if(r.outs[i].vendor && r.outs[i].area){
-          r.outs[i].unit = getUnitPrice(r.outs[i].vendor, r.outs[i].area);
-        }
-        saveDraft(); renderOuts(); recalcCurrent(); renderDashboard();
+    tb.querySelectorAll("input[data-o='area']").forEach(inp=>{
+      const i = Number(inp.dataset.i);
+      inp.addEventListener("input", ()=>{
+        r.outs[i].area = inp.value;
+        saveDraft(); renderOuts(); recalc();
       });
     });
-    tb.querySelectorAll('input[data-o-k="pieces"]').forEach(inp=>{
+    tb.querySelectorAll("input[data-o='pieces']").forEach(inp=>{
       const i = Number(inp.dataset.i);
       inp.addEventListener("input", ()=>{
         r.outs[i].pieces = inp.value;
-        // update unit if possible
-        if(r.outs[i].vendor && r.outs[i].area){
-          r.outs[i].unit = getUnitPrice(r.outs[i].vendor, r.outs[i].area);
-        }
-        saveDraft(); recalcCurrent(); renderOuts(); renderDashboard();
-      });
-      inp.addEventListener("blur", ()=>{
-        const v = num(inp.value);
-        inp.value = v ? String(v) : "";
-        r.outs[i].pieces = inp.value;
-        saveDraft(); recalcCurrent(); renderOuts(); renderDashboard();
+        saveDraft(); renderOuts(); recalc();
       });
     });
-    tb.querySelectorAll('input[data-o-k="inputAmount"]').forEach(inp=>{
+    tb.querySelectorAll("input[data-o='inputAmount']").forEach(inp=>{
       const i = Number(inp.dataset.i);
       inp.addEventListener("input", ()=>{
         r.outs[i].inputAmount = inp.value;
-        saveDraft(); recalcCurrent(); renderDashboard();
+        saveDraft(); recalc();
       });
       inp.addEventListener("blur", ()=>{
         const v = num(inp.value);
         inp.value = v ? String(v) : "";
         r.outs[i].inputAmount = inp.value;
-        saveDraft(); recalcCurrent(); renderDashboard();
+        saveDraft(); renderOuts(); recalc();
       });
     });
-    tb.querySelectorAll('button[data-del-out]').forEach(btn=>{
+    tb.querySelectorAll("button[data-del-out]").forEach(btn=>{
       btn.addEventListener("click", ()=>{
         const i = Number(btn.dataset.delOut);
         r.outs.splice(i,1);
-        if(!r.outs.length) r.outs.push({vendor:"", area:"", pieces:"", unit:0, inputAmount:""});
-        saveDraft(); renderOuts(); recalcCurrent(); renderDashboard();
+        if(!r.outs.length) r.outs.push({vendor:"", area:"", pieces:"", inputAmount:""});
+        saveDraft(); renderOuts(); recalc();
       });
     });
 
-    applyUIMode();
+    applyModeColumns();
   }
 
-  // ========= Recalc for a report =========
-  function calcReport(r){
+  // ===== Calc =====
+  function calc(){
+    const r = state.draft.report;
     const tax = num(r.taxRate)/100;
-    let salesEx=0, salesIn=0, outEx=0, outIn=0;
+    const mode = state.draft.uiMode;
 
-    (r.sales||[]).forEach(s=>{
-      const inputAmount = num(s.inputAmount);
-      const ex = r.salesMode==="ex" ? inputAmount : (tax ? inputAmount/(1+tax) : inputAmount);
-      const inc = r.salesMode==="in" ? inputAmount : ex*(1+tax);
-      salesEx += ex; salesIn += inc;
+    let salesEx=0, outEx=0;
+
+    // sales
+    r.sales.forEach(s=>{
+      const pieces = num(s.pieces);
+      const unit = getClientUnit(s.client);
+      const isAuto = (mode==="normal" && pieces>0 && unit>0);
+      const ex = isAuto ? (pieces*unit) : num(s.inputAmount);
+      salesEx += ex;
     });
 
-    const uiMode = state.draft.uiMode || "normal";
-
-    (r.outs||[]).forEach(o=>{
+    // outs
+    r.outs.forEach(o=>{
       const pieces = num(o.pieces);
-      const unit = num(o.unit);
-      const autoEx = pieces * unit;
-      const inputAmount = num(o.inputAmount);
-
-      const isAuto = (uiMode==="normal" && pieces>0 && unit>0);
-      const ex = isAuto ? autoEx : inputAmount;
-      const inc = ex*(1+tax);
-
-      outEx += ex; outIn += inc;
+      const unit = getOutUnit(o.vendor, o.area);
+      const isAuto = (mode==="normal" && pieces>0 && unit>0);
+      const ex = isAuto ? (pieces*unit) : num(o.inputAmount);
+      outEx += ex;
     });
 
     const grossEx = salesEx - outEx;
-    const grossIn = salesIn - outIn;
-    const rate = salesEx ? (grossEx / salesEx) : 0;
+    const rate = salesEx ? (grossEx/salesEx) : 0;
 
     // incentives
     const base = (r.incBase==="sales") ? salesEx : grossEx;
@@ -1156,211 +1086,90 @@
     if(minV>0){ mgrInc = Math.max(mgrInc, minV); salesInc = Math.max(salesInc, minV); }
     if(maxV>0){ mgrInc = Math.min(mgrInc, maxV); salesInc = Math.min(salesInc, maxV); }
 
-    return {salesEx,salesIn,outEx,outIn,grossEx,grossIn,rate,mgrInc,salesInc};
+    return {salesEx,outEx,grossEx,rate,mgrInc,salesInc,tax};
   }
 
-  function recalcCurrent(){
-    const r = getCurrentReport(); if(!r) return;
-    const c = calcReport(r);
+  function recalc(){
+    const r = state.draft.report;
+    const c = calc();
 
-    $("kpiSales").textContent = `税抜 ${yen(Math.round(c.salesEx))} / 税込 ${yen(Math.round(c.salesIn))}`;
-    $("kpiOut").textContent   = `税抜 ${yen(Math.round(c.outEx))} / 税込 ${yen(Math.round(c.outIn))}`;
+    $("kSalesEx").textContent = yen(Math.round(c.salesEx));
+    $("kOutEx").textContent   = yen(Math.round(c.outEx));
+    $("kGrossEx").textContent = yen(Math.round(c.grossEx));
+    $("kGrossEx").className = "v num " + (c.grossEx>=0 ? "good" : "bad");
+    $("kRate").textContent = pct(c.rate);
 
-    $("kpiGross").textContent = `税抜 ${yen(Math.round(c.grossEx))} / 税込 ${yen(Math.round(c.grossIn))}`;
-    $("kpiGross").className   = "v num " + (c.grossEx>=0 ? "good" : "bad");
-    $("kpiRate").textContent  = pct(c.rate);
+    $("kMgrInc").textContent = yen(Math.round(c.mgrInc));
+    $("kSalesInc").textContent = yen(Math.round(c.salesInc));
 
-    $("kpiMgrInc").textContent = yen(Math.round(c.mgrInc));
-    $("kpiSalesInc").textContent = yen(Math.round(c.salesInc));
-
-    // alert
     const th = num(r.alertRate)/100;
-    const isBad = (c.rate <= th);
-    $("kpiAlert").innerHTML = isBad
+    $("kAlert").innerHTML = (c.rate <= th)
       ? `<span class="pill pill-red">粗利率が低い</span>`
       : `<span class="pill pill-green">OK</span>`;
   }
 
-  // ========= Dashboard Render =========
-  function renderDashboard(){
-    const month = $("dashMonth").value || nowMonth();
-    const pref = $("dashPref").value || "";
-    const role = $("dashRole").value || "";
-    const baseQ = ($("dashBase").value || "").trim();
+  // ===== Print =====
+  function fillPrint(){
+    const r = state.draft.report;
+    const c = calc();
+    const taxRate = num(r.taxRate);
+    const grossRate = pct(c.rate);
 
-    const rows = state.draft.reports
-      .filter(r => (r.month||"") === month)
-      .filter(r => !pref || (r.pref||"")===pref)
-      .filter(r => !role || (r.role||"")===role)
-      .filter(r => !baseQ || (r.base||"").includes(baseQ));
+    $("printMeta").innerHTML = `
+      対象月：<b>${esc(r.month||"")}</b> ／ 都道府県：<b>${esc(r.pref||"")}</b> ／ 拠点：<b>${esc(r.base||"")}</b><br>
+      報告者：<b>${esc(r.reporter||"")}</b> ／ 営業：<b>${esc(r.salesRep||"")}</b> ／ 消費税：<b>${taxRate}%</b>
+    `;
+    $("printKpis").innerHTML = `
+      売上(税抜)：<b>${yen(Math.round(c.salesEx))}</b><br>
+      委託(税抜)：<b>${yen(Math.round(c.outEx))}</b><br>
+      粗利(税抜)：<b>${yen(Math.round(c.grossEx))}</b> ／ 粗利率：<b>${grossRate}</b><br>
+      責任者インセン：<b>${yen(Math.round(c.mgrInc))}</b> ／ 営業インセン：<b>${yen(Math.round(c.salesInc))}</b>
+    `;
+    $("printGoalMemo").innerHTML = `
+      目標：<b>${esc(r.goal||"")}</b><br>
+      メモ：<b>${esc(r.memo||"")}</b>
+    `;
 
-    let sumSales=0,sumOut=0,sumGross=0;
-    const tb = $("dashTbody");
-    tb.innerHTML = "";
-
-    rows.forEach(r=>{
-      const c = calcReport(r);
-      sumSales += c.salesEx; sumOut += c.outEx; sumGross += c.grossEx;
-      const rateTxt = pct(c.rate);
-      const grossCls = c.grossEx>=0 ? "good" : "bad";
+    // tables
+    const sTb = $("printSalesTbody");
+    sTb.innerHTML = "";
+    r.sales.forEach(s=>{
+      const pieces = num(s.pieces);
+      const unit = getClientUnit(s.client);
+      const isAuto = (state.draft.uiMode==="normal" && pieces>0 && unit>0);
+      const ex = isAuto ? (pieces*unit) : num(s.inputAmount);
 
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="num">${esc(r.month||"")}</td>
-        <td>${esc(r.pref||"")}</td>
-        <td>${esc(r.base||"")}</td>
-        <td>${esc(r.role||"")}</td>
-        <td>${esc(r.reporter||"")}</td>
-        <td>${esc(r.salesRep||"")}</td>
-        <td class="right num">${yen(Math.round(c.salesEx))}</td>
-        <td class="right num">${yen(Math.round(c.outEx))}</td>
-        <td class="right num ${grossCls}">${yen(Math.round(c.grossEx))}</td>
-        <td class="right num blue">${rateTxt}</td>
-        <td class="right num">${yen(Math.round(c.mgrInc))}</td>
-        <td class="right num">${yen(Math.round(c.salesInc))}</td>
-        <td class="center no-print">
-          <button class="btn btn-yellow" data-edit="${esc(r.id)}">編集</button>
-        </td>
+        <td>${esc(s.client||"")}</td>
+        <td class="right num">${pieces?pieces:""}</td>
+        <td class="right num">${unit?yen(Math.round(unit)):""}</td>
+        <td class="right num">${yen(Math.round(ex))}</td>
       `;
-      tb.appendChild(tr);
+      sTb.appendChild(tr);
     });
 
-    const rate = sumSales ? (sumGross/sumSales) : 0;
-    $("dashKpiSalesEx").textContent = yen(Math.round(sumSales));
-    $("dashKpiOutEx").textContent   = yen(Math.round(sumOut));
-    $("dashKpiGrossEx").textContent = yen(Math.round(sumGross));
-    $("dashKpiGrossEx").className = "v num " + (sumGross>=0 ? "good" : "bad");
-    $("dashKpiRate").textContent = pct(rate);
+    const oTb = $("printOutTbody");
+    oTb.innerHTML = "";
+    r.outs.forEach(o=>{
+      const pieces = num(o.pieces);
+      const unit = getOutUnit(o.vendor, o.area);
+      const isAuto = (state.draft.uiMode==="normal" && pieces>0 && unit>0);
+      const ex = isAuto ? (pieces*unit) : num(o.inputAmount);
 
-    tb.querySelectorAll("button[data-edit]").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        const id = btn.dataset.edit;
-        state.draft.currentReportId = id;
-        saveDraft();
-        renderReportSelect();
-        hydrateUI();
-        setTab("input");
-      });
-    });
-  }
-
-  // ========= Master Render =========
-  function renderMaster(){
-    // lists
-    $("clientTbody").innerHTML = (state.master.clients||[]).map((c,idx)=>`
-      <tr><td>${esc(c)}</td><td class="center"><button class="btn btn-red" data-del-client="${idx}">×</button></td></tr>
-    `).join("");
-    $("vendorTbody").innerHTML = (state.master.vendors||[]).map((v,idx)=>`
-      <tr><td>${esc(v)}</td><td class="center"><button class="btn btn-red" data-del-vendor="${idx}">×</button></td></tr>
-    `).join("");
-    $("areaTbody").innerHTML = (state.master.areas||[]).map((a,idx)=>`
-      <tr><td>${esc(a)}</td><td class="center"><button class="btn btn-red" data-del-area="${idx}">×</button></td></tr>
-    `).join("");
-
-    // price table
-    const vOpts = (state.master.vendors||[]).map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");
-    const aOpts = (state.master.areas||[]).map(a=>`<option value="${esc(a)}">${esc(a)}</option>`).join("");
-
-    $("priceTbody").innerHTML = (state.master.prices||[]).map((p,idx)=>`
-      <tr>
-        <td>
-          <select data-pk="vendor" data-i="${idx}">
-            <option value="">選択</option>${vOpts}
-          </select>
-        </td>
-        <td>
-          <select data-pk="area" data-i="${idx}">
-            <option value="">選択</option>${aOpts}
-          </select>
-        </td>
-        <td class="right">
-          <input class="num" data-pk="unit" data-i="${idx}" inputmode="decimal" placeholder="単価" value="${p.unit??""}">
-        </td>
-        <td class="center"><button class="btn btn-red" data-del-price="${idx}">×</button></td>
-      </tr>
-    `).join("");
-
-    // bind deletes
-    $("clientTbody").querySelectorAll("button[data-del-client]").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        const i = Number(btn.dataset.delClient);
-        state.master.clients.splice(i,1);
-        renderMaster(); saveMaster(); renderSales();
-      });
-    });
-    $("vendorTbody").querySelectorAll("button[data-del-vendor]").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        const i = Number(btn.dataset.delVendor);
-        const name = state.master.vendors[i];
-        state.master.vendors.splice(i,1);
-        state.master.prices = (state.master.prices||[]).filter(p=>p.vendor!==name);
-        renderMaster(); saveMaster(); renderOuts();
-      });
-    });
-    $("areaTbody").querySelectorAll("button[data-del-area]").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        const i = Number(btn.dataset.delArea);
-        const name = state.master.areas[i];
-        state.master.areas.splice(i,1);
-        state.master.prices = (state.master.prices||[]).filter(p=>p.area!==name);
-        renderMaster(); saveMaster(); renderOuts();
-      });
-    });
-
-    // bind price selects/inputs
-    $("priceTbody").querySelectorAll('select[data-pk="vendor"]').forEach(sel=>{
-      const i = Number(sel.dataset.i);
-      sel.value = state.master.prices[i].vendor || "";
-      sel.addEventListener("change", ()=> state.master.prices[i].vendor = sel.value);
-    });
-    $("priceTbody").querySelectorAll('select[data-pk="area"]').forEach(sel=>{
-      const i = Number(sel.dataset.i);
-      sel.value = state.master.prices[i].area || "";
-      sel.addEventListener("change", ()=> state.master.prices[i].area = sel.value);
-    });
-    $("priceTbody").querySelectorAll('input[data-pk="unit"]').forEach(inp=>{
-      const i = Number(inp.dataset.i);
-      inp.addEventListener("input", ()=> state.master.prices[i].unit = inp.value );
-      inp.addEventListener("blur", ()=>{
-        const v = num(inp.value);
-        inp.value = v ? String(v) : "";
-        state.master.prices[i].unit = inp.value;
-      });
-    });
-    $("priceTbody").querySelectorAll('button[data-del-price]').forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        const i = Number(btn.dataset.delPrice);
-        state.master.prices.splice(i,1);
-        renderMaster();
-      });
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${esc(o.vendor||"")}</td>
+        <td>${esc(o.area||"")}</td>
+        <td class="right num">${pieces?pieces:""}</td>
+        <td class="right num">${unit?yen(Math.round(unit)):""}</td>
+        <td class="right num">${yen(Math.round(ex))}</td>
+      `;
+      oTb.appendChild(tr);
     });
   }
 
-  // ========= History Render =========
-  function renderHistory(){
-    const sel = $("historySelect");
-    sel.innerHTML = "";
-    if(!state.history.length){
-      const op = document.createElement("option");
-      op.value = "";
-      op.textContent = "（履歴なし）";
-      sel.appendChild(op);
-      return;
-    }
-    state.history
-      .slice()
-      .sort((a,b)=> (b.savedAt||"").localeCompare(a.savedAt||""))
-      .forEach(h=>{
-        const r = h.snapshotReport;
-        const label = `${r.month||"未設定"} / ${r.pref||""} ${r.base||""} / 報告:${r.reporter||""}（${r.role||""}）`;
-        const op = document.createElement("option");
-        op.value = h.id;
-        op.textContent = label;
-        sel.appendChild(op);
-      });
-  }
-
-  // ========= CSV Export =========
+  // ===== CSV =====
   function csvEscape(v){
     const s = String(v ?? "");
     if(/[",\n]/.test(s)) return `"${s.replace(/"/g,'""')}"`;
@@ -1378,62 +1187,120 @@
   }
 
   function exportCSV(){
-    // 全拠点レポートをまとめて出す（本部確認用）
+    const r = state.draft.report;
+    const c = calc();
+
     const cols = [
-      "type","reportId","month","pref","base","role","reporter","salesRep","goal","memo",
-      "taxRate","salesMode","mgrPct","salesPct","incBase","incMin","incMax","alertRate",
+      "type","month","pref","base","reporter","salesRep","goal","memo",
+      "taxRate","uiMode","mgrPct","salesPct","incBase","incMin","incMax","alertRate",
       "salesEx","outEx","grossEx","grossRate","mgrInc","salesInc",
-      "client","salesInputAmount",
-      "vendor","area","pieces","unitEx","outInputAmount"
+      "client","salesPieces","salesUnitEx","salesAmountEx",
+      "vendor","area","outPieces","outUnitEx","outAmountEx"
     ];
     const rows = [];
     rows.push(cols.join(","));
 
-    state.draft.reports.forEach(r=>{
-      const c = calcReport(r);
-      // summary row
-      const sum = {
-        type:"SUMMARY",
-        reportId:r.id,
-        month:r.month,pref:r.pref,base:r.base,role:r.role,reporter:r.reporter,salesRep:r.salesRep,goal:r.goal,memo:r.memo,
-        taxRate:r.taxRate,salesMode:r.salesMode,mgrPct:r.mgrPct,salesPct:r.salesPct,incBase:r.incBase,incMin:r.incMin,incMax:r.incMax,alertRate:r.alertRate,
-        salesEx:Math.round(c.salesEx),outEx:Math.round(c.outEx),grossEx:Math.round(c.grossEx),grossRate:c.rate,
-        mgrInc:Math.round(c.mgrInc),salesInc:Math.round(c.salesInc)
+    // summary
+    rows.push(cols.map(k=>csvEscape(({
+      type:"SUMMARY",
+      month:r.month,pref:r.pref,base:r.base,reporter:r.reporter,salesRep:r.salesRep,goal:r.goal,memo:r.memo,
+      taxRate:r.taxRate,uiMode:state.draft.uiMode,mgrPct:r.mgrPct,salesPct:r.salesPct,incBase:r.incBase,incMin:r.incMin,incMax:r.incMax,alertRate:r.alertRate,
+      salesEx:Math.round(c.salesEx),outEx:Math.round(c.outEx),grossEx:Math.round(c.grossEx),grossRate:c.rate,
+      mgrInc:Math.round(c.mgrInc),salesInc:Math.round(c.salesInc)
+    })[k] ?? "")).join(","));
+
+    // sales lines
+    r.sales.forEach(s=>{
+      const pieces = num(s.pieces);
+      const unit = getClientUnit(s.client);
+      const isAuto = (state.draft.uiMode==="normal" && pieces>0 && unit>0);
+      const ex = isAuto ? (pieces*unit) : num(s.inputAmount);
+      const line = {
+        type:"SALES",
+        month:r.month,pref:r.pref,base:r.base,reporter:r.reporter,salesRep:r.salesRep,
+        client:s.client||"", salesPieces:pieces||"", salesUnitEx:unit||"", salesAmountEx:Math.round(ex)
       };
-      rows.push(cols.map(k=>csvEscape(sum[k]??"")).join(","));
-
-      // sales rows
-      (r.sales||[]).forEach(s=>{
-        const line = {
-          type:"SALES",
-          reportId:r.id,
-          month:r.month,pref:r.pref,base:r.base,role:r.role,reporter:r.reporter,salesRep:r.salesRep,
-          client:s.client||"",
-          salesInputAmount:num(s.inputAmount)||""
-        };
-        rows.push(cols.map(k=>csvEscape(line[k]??"")).join(","));
-      });
-
-      // outs rows
-      (r.outs||[]).forEach(o=>{
-        const line = {
-          type:"OUTSOURCE",
-          reportId:r.id,
-          month:r.month,pref:r.pref,base:r.base,role:r.role,reporter:r.reporter,salesRep:r.salesRep,
-          vendor:o.vendor||"",
-          area:o.area||"",
-          pieces:num(o.pieces)||"",
-          unitEx:num(o.unit)||"",
-          outInputAmount:num(o.inputAmount)||""
-        };
-        rows.push(cols.map(k=>csvEscape(line[k]??"")).join(","));
-      });
+      rows.push(cols.map(k=>csvEscape(line[k] ?? "")).join(","));
     });
 
-    downloadText(rows.join("\n"), `OFA_拠点別_月次_${nowMonth()}.csv`, "text/csv");
+    // out lines
+    r.outs.forEach(o=>{
+      const pieces = num(o.pieces);
+      const unit = getOutUnit(o.vendor, o.area);
+      const isAuto = (state.draft.uiMode==="normal" && pieces>0 && unit>0);
+      const ex = isAuto ? (pieces*unit) : num(o.inputAmount);
+      const line = {
+        type:"OUTSOURCE",
+        month:r.month,pref:r.pref,base:r.base,reporter:r.reporter,salesRep:r.salesRep,
+        vendor:o.vendor||"", area:o.area||"", outPieces:pieces||"", outUnitEx:unit||"", outAmountEx:Math.round(ex)
+      };
+      rows.push(cols.map(k=>csvEscape(line[k] ?? "")).join(","));
+    });
+
+    downloadText(rows.join("\n"), `OFA_月次_${r.month||nowMonth()}_${r.pref||""}_${r.base||""}.csv`, "text/csv");
   }
 
-  // ========= OCR / PDF Import =========
+  // ===== Board =====
+  function renderBoard(){
+    const month = $("boardMonth").value || state.draft.report.month || nowMonth();
+    const pref = $("boardPref").value || "";
+    const q = ($("boardBaseQ").value || "").trim();
+
+    const list = (state.hist||[])
+      .map(h=>h.snapshot)
+      .filter(x=> (x.month||"") === month)
+      .filter(x=> !pref || (x.pref||"")===pref)
+      .filter(x=> !q || (x.base||"").includes(q));
+
+    const tb = $("boardTbody");
+    tb.innerHTML = "";
+
+    list.forEach(snap=>{
+      // temp calc from snapshot using current master + uiMode = snap.uiMode
+      const tmp = JSON.parse(JSON.stringify(state.draft));
+      tmp.uiMode = snap.uiMode || "simple";
+      tmp.report = snap;
+      const oldMode = state.draft.uiMode;
+      const oldReport = state.draft.report;
+      state.draft.uiMode = tmp.uiMode;
+      state.draft.report = tmp.report;
+      const c = calc();
+      state.draft.uiMode = oldMode;
+      state.draft.report = oldReport;
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${esc(snap.month||"")}</td>
+        <td>${esc(snap.pref||"")}</td>
+        <td>${esc(snap.base||"")}</td>
+        <td>${esc(snap.reporter||"")}</td>
+        <td>${esc(snap.salesRep||"")}</td>
+        <td class="right num">${yen(Math.round(c.salesEx))}</td>
+        <td class="right num">${yen(Math.round(c.outEx))}</td>
+        <td class="right num ${c.grossEx>=0?"good":"bad"}">${yen(Math.round(c.grossEx))}</td>
+        <td class="right num blue">${pct(c.rate)}</td>
+        <td class="right num">${yen(Math.round(c.mgrInc))}</td>
+        <td class="right num">${yen(Math.round(c.salesInc))}</td>
+        <td class="center no-print"><button class="btn btn-yellow" data-load="${esc(snap._id)}">編集</button></td>
+      `;
+      tb.appendChild(tr);
+    });
+
+    tb.querySelectorAll("button[data-load]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const id = btn.dataset.load;
+        const hit = state.hist.find(h=>h.snapshot._id===id);
+        if(!hit) return;
+        state.draft.report = JSON.parse(JSON.stringify(hit.snapshot));
+        state.draft.uiMode = state.draft.report.uiMode || state.draft.uiMode || "simple";
+        saveDraft();
+        hydrate();
+        setTab("input");
+      });
+    });
+  }
+
+  // ===== OCR Parse (multiple candidates UI) =====
   function normalizeText(t){
     return String(t||"")
       .replace(/\u3000/g," ")
@@ -1443,104 +1310,134 @@
       .replace(/\s+/g," ")
       .trim();
   }
-
-  function extractYenAmounts(t){
-    const amounts = [];
+  function extractYenCandidates(t){
+    const out = [];
     const re = /(?:¥\s*)?(-?\d{1,3}(?:,\d{3})+|-?\d+)(?:\s*円)?/g;
     let m;
     while((m=re.exec(t))){
       const raw = m[1].replace(/,/g,"");
       const v = Number(raw);
-      if(Number.isFinite(v) && Math.abs(v) >= 1000) amounts.push(v);
+      if(Number.isFinite(v) && Math.abs(v) >= 500) out.push(v);
     }
-    amounts.sort((a,b)=>Math.abs(b)-Math.abs(a));
-    return amounts;
+    // 重複削除
+    const uniq = Array.from(new Set(out.map(x=>Math.round(x))));
+    uniq.sort((a,b)=>Math.abs(b)-Math.abs(a));
+    return uniq.slice(0,12);
   }
-
-  function extractPieces(t){
-    const pieces = [];
+  function extractPiecesCandidates(t){
+    const out = [];
     const re = /(\d{1,6})\s*(個|pcs|件)/ig;
     let m;
     while((m=re.exec(t))){
       const v = Number(m[1]);
-      if(Number.isFinite(v) && v>0) pieces.push(v);
+      if(Number.isFinite(v) && v>0) out.push(v);
     }
-    pieces.sort((a,b)=>b-a);
-    return pieces;
+    const uniq = Array.from(new Set(out));
+    uniq.sort((a,b)=>b-a);
+    return uniq.slice(0,8);
   }
-
   function guessType(t){
     const outK = ["支払","振込","請求","委託","外注","精算","控除","手数料","差引","立替"];
-    const salesK = ["売上","入金","受領","ご請求","ご依頼","荷主","発注","お支払日"];
+    const salesK = ["売上","入金","受領","ご依頼","荷主","発注"];
     const sOut = outK.reduce((acc,k)=>acc+(t.includes(k)?1:0),0);
     const sSales = salesK.reduce((acc,k)=>acc+(t.includes(k)?1:0),0);
-    if(sOut>sSales) return "委託";
-    if(sSales>sOut) return "売上";
-    return "不明";
+    if(sOut>sSales) return "out";
+    if(sSales>sOut) return "sales";
+    return "out";
   }
-
-  function guessPartyFromMasters(t){
-    const hitClients = (state.master.clients||[]).filter(n=>n && t.includes(n));
-    const hitVendors = (state.master.vendors||[]).filter(n=>n && t.includes(n));
-    return {hitClients, hitVendors};
-  }
-
-  function setPreview(rows){
-    const tb = $("invoicePreviewTbody");
-    tb.innerHTML = "";
-    rows.slice(0,20).forEach(r=>{
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${esc(r.type)}</td>
-        <td>${esc(r.party||"")}</td>
-        <td class="right num">${r.amount!=null ? yen(Math.round(r.amount)) : ""}</td>
-        <td class="right num">${r.pieces!=null ? Math.round(r.pieces) : ""}</td>
-      `;
-      tb.appendChild(tr);
+  function guessPartyOptions(t, type){
+    const opts = [];
+    if(type==="sales"){
+      (state.master.clients||[]).forEach(c=>{
+        if(c.name && t.includes(c.name)) opts.push({value:c.name,label:c.name});
+      });
+      (state.master.clients||[]).forEach(c=> opts.push({value:c.name,label:c.name}));
+    }else{
+      const vendors = Array.from(new Set((state.master.outPrices||[]).map(x=>x.vendor))).filter(Boolean);
+      vendors.forEach(v=>{
+        if(t.includes(v)) opts.push({value:v,label:v});
+      });
+      vendors.forEach(v=>opts.push({value:v,label:v}));
+    }
+    // 先頭に空
+    opts.unshift({value:"", label:"（未選択）"});
+    // 重複削除（順序維持）
+    const seen = new Set();
+    return opts.filter(o=>{
+      const k = o.value+"|"+o.label;
+      if(seen.has(k)) return false;
+      seen.add(k); return true;
     });
   }
 
-  function parseInvoiceText(rawText){
-    const r = getCurrentReport(); if(!r) return {preview:[], applied:false};
+  // Modal control
+  let modalCandidates = { amounts:[], pieces:[], raw:"" };
 
-    const t = normalizeText(rawText);
-    if(!t) return {preview:[], applied:false};
+  function openModal(type, partyOptions, amounts, pieces){
+    $("modalBg").style.display = "flex";
+    $("modalType").value = type;
 
-    const type = guessType(t);
-    const amounts = extractYenAmounts(t);
-    const pieces = extractPieces(t);
-    const {hitClients, hitVendors} = guessPartyFromMasters(t);
+    // party options
+    const sel = $("modalParty");
+    sel.innerHTML = "";
+    partyOptions.forEach(o=>{
+      const op = document.createElement("option");
+      op.value = o.value; op.textContent = o.label;
+      sel.appendChild(op);
+    });
 
-    const amount = amounts.length ? amounts[0] : null; // 最大を合計候補として採用
-    const piece = pieces.length ? pieces[0] : null;
+    // pieces prefill
+    $("modalPieces").value = pieces.length ? String(pieces[0]) : "";
+    $("modalArea").value = "";
 
-    const preview = [{
-      type,
-      party: type==="売上" ? (hitClients[0]||"") : type==="委託" ? (hitVendors[0]||"") : "",
-      amount,
-      pieces: piece
-    }];
-
-    // apply (落ちてもOK：行追加だけする)
-    if(amount!=null){
-      if(type==="委託"){
-        r.outs.push({vendor: hitVendors[0]||"", area:"", pieces: piece!=null ? String(piece) : "", unit:0, inputAmount: String(amount)});
-      }else{
-        r.sales.push({client: hitClients[0]||"", inputAmount: String(amount)});
-      }
-      // unit update
-      r.outs.forEach(o=>{
-        if(o.vendor && o.area){
-          o.unit = getUnitPrice(o.vendor, o.area);
-        }
-      });
-      saveDraft();
-      renderSales(); renderOuts(); recalcCurrent(); renderDashboard();
-      return {preview, applied:true};
+    // amount choices
+    const box = $("amountChoices");
+    box.innerHTML = "";
+    if(!amounts.length){
+      box.innerHTML = `<div class="muted">金額候補が見つかりませんでした。OCRテキストを確認してください。</div>`;
+      return;
     }
-    return {preview, applied:false};
+    amounts.forEach(a=>{
+      const div = document.createElement("div");
+      div.className = "choice";
+      div.innerHTML = `
+        <div>
+          <div class="big">¥ ${yen(Math.round(a))}</div>
+          <div class="small">タップで確定</div>
+        </div>
+        <div class="pill pill-blue">選ぶ</div>
+      `;
+      div.addEventListener("click", ()=>confirmModalAmount(a));
+      box.appendChild(div);
+    });
   }
 
+  function closeModal(){
+    $("modalBg").style.display = "none";
+    modalCandidates = {amounts:[], pieces:[], raw:""};
+  }
+
+  function confirmModalAmount(amount){
+    const r = state.draft.report;
+    const type = $("modalType").value; // sales/out
+    const party = $("modalParty").value || "";
+    const pieces = num($("modalPieces").value);
+    const area = ($("modalArea").value || "").trim();
+
+    if(type==="sales"){
+      r.sales.push({client: party, pieces: pieces?String(pieces):"", inputAmount: String(amount)});
+    }else{
+      r.outs.push({vendor: party, area: area, pieces: pieces?String(pieces):"", inputAmount: String(amount)});
+    }
+
+    saveDraft();
+    renderSales();
+    renderOuts();
+    recalc();
+    closeModal();
+  }
+
+  // PDF parse
   async function parsePDFFile(file){
     const buf = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({data:buf}).promise;
@@ -1553,283 +1450,294 @@
     return txt;
   }
 
-  // ========= Wire Base Fields =========
+  // ===== Master Render =====
+  function renderMaster(){
+    // clients
+    const ctb = $("clientTbody");
+    ctb.innerHTML = (state.master.clients||[]).map((c,idx)=>`
+      <tr>
+        <td>${esc(c.name)}</td>
+        <td class="right num">${yen(Math.round(num(c.unitEx)))}</td>
+        <td class="center"><button class="btn btn-red" data-delc="${idx}">×</button></td>
+      </tr>
+    `).join("");
+    ctb.querySelectorAll("button[data-delc]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const i = Number(btn.dataset.delc);
+        state.master.clients.splice(i,1);
+        saveMaster(); renderMaster(); renderSales(); recalc();
+      });
+    });
+
+    // outs
+    const otb = $("outPriceTbody");
+    otb.innerHTML = (state.master.outPrices||[]).map((o,idx)=>`
+      <tr>
+        <td>${esc(o.vendor)}</td>
+        <td>${esc(o.area)}</td>
+        <td class="right num">${yen(Math.round(num(o.unitEx)))}</td>
+        <td class="center"><button class="btn btn-red" data-delo="${idx}">×</button></td>
+      </tr>
+    `).join("");
+    otb.querySelectorAll("button[data-delo]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const i = Number(btn.dataset.delo);
+        state.master.outPrices.splice(i,1);
+        saveMaster(); renderMaster(); renderOuts(); recalc();
+      });
+    });
+  }
+
+  // ===== History =====
+  function renderHistory(){
+    const sel = $("historySelect");
+    sel.innerHTML = "";
+    if(!state.hist.length){
+      const op = document.createElement("option");
+      op.value = ""; op.textContent = "（履歴なし）";
+      sel.appendChild(op);
+      return;
+    }
+    state.hist.slice().sort((a,b)=>(b.savedAt||"").localeCompare(a.savedAt||"")).forEach(h=>{
+      const r = h.snapshot;
+      const op = document.createElement("option");
+      op.value = r._id;
+      op.textContent = `${r.month} / ${r.pref} ${r.base} / ${r.reporter}`;
+      sel.appendChild(op);
+    });
+  }
+
+  // ===== Hydrate =====
+  function hydrate(){
+    const r = state.draft.report;
+    $("uiMode").value = state.draft.uiMode || "simple";
+    $("month").value = r.month || nowMonth();
+    $("pref").value = r.pref || "";
+    $("base").value = r.base || "";
+    $("reporter").value = r.reporter || "";
+    $("salesRep").value = r.salesRep || "";
+    $("goal").value = r.goal || "";
+    $("memo").value = r.memo || "";
+    $("taxRate").value = (r.taxRate ?? 10);
+    $("alertRate").value = (r.alertRate ?? 5);
+    $("mgrPct").value = (r.mgrPct ?? 0.3);
+    $("salesPct").value = (r.salesPct ?? 0.3);
+    $("incBase").value = r.incBase || "gross";
+    $("incMin").value = (r.incMin ?? 0);
+    $("incMax").value = (r.incMax ?? 0);
+
+    if(!Array.isArray(r.sales)) r.sales = [{client:"", pieces:"", inputAmount:""}];
+    if(!Array.isArray(r.outs)) r.outs = [{vendor:"", area:"", pieces:"", inputAmount:""}];
+
+    applyModeColumns();
+    renderSales();
+    renderOuts();
+    recalc();
+  }
+
+  // ===== Wire =====
   function wire(){
-    // top actions
-    $("btnSaveDraft").addEventListener("click", ()=>{
-      saveDraft();
-      alert("端末に保存しました（下書き）");
-    });
-    $("btnPDF").addEventListener("click", ()=>{
-      window.print();
-    });
-    $("btnCSV").addEventListener("click", exportCSV);
-    $("btnResetDraft").addEventListener("click", ()=>{
-      if(!confirm("入力（拠点レポート）をクリアしますか？マスター/履歴は残ります")) return;
-      state.draft.reports = [defaultReport()];
-      state.draft.currentReportId = state.draft.reports[0].id;
-      saveDraft();
-      renderReportSelect();
-      hydrateUI();
-      renderDashboard();
-    });
-
-    // dashboard
-    $("btnDashPrint").addEventListener("click", ()=>window.print());
-    $("btnDashRefresh").addEventListener("click", renderDashboard);
-    $("dashPref").addEventListener("change", renderDashboard);
-    $("dashRole").addEventListener("change", renderDashboard);
-    $("dashBase").addEventListener("input", renderDashboard);
-    $("dashMonth").addEventListener("change", renderDashboard);
-
-    // report select
-    $("reportSelect").addEventListener("change", ()=>{
-      state.draft.currentReportId = $("reportSelect").value;
-      saveDraft();
-      hydrateUI();
-    });
-    $("btnAddReport").addEventListener("click", ()=>{
-      const r = defaultReport();
-      // 追加時は月を揃える（現場で楽）
-      const cur = getCurrentReport();
-      if(cur?.month) r.month = cur.month;
-      state.draft.reports.push(r);
-      state.draft.currentReportId = r.id;
-      saveDraft();
-      renderReportSelect();
-      hydrateUI();
-    });
-    $("btnDeleteReport").addEventListener("click", ()=>{
-      const r = getCurrentReport(); if(!r) return;
-      if(!confirm("この拠点レポートを削除しますか？")) return;
-      state.draft.reports = state.draft.reports.filter(x=>x.id!==r.id);
-      if(!state.draft.reports.length) state.draft.reports.push(defaultReport());
-      state.draft.currentReportId = state.draft.reports[0].id;
-      saveDraft();
-      renderReportSelect();
-      hydrateUI();
-      renderDashboard();
-    });
-
+    // mode
     $("uiMode").addEventListener("change", ()=>{
       state.draft.uiMode = $("uiMode").value;
       saveDraft();
-      applyUIMode();
-      renderOuts();
-      recalcCurrent();
-      renderDashboard();
+      applyModeColumns();
+      renderSales(); renderOuts(); recalc();
     });
 
-    // bind report fields
-    const bind = (id, key, type="input")=>{
-      $(id).addEventListener(type, ()=>{
-        const r = getCurrentReport(); if(!r) return;
-        r[key] = $(id).value;
-        saveDraft();
-        renderReportSelect();
-        recalcCurrent();
-        renderDashboard();
+    // base fields
+    const bind = (id, key, evt="input")=>{
+      $(id).addEventListener(evt, ()=>{
+        state.draft.report[key] = $(id).value;
+        saveDraft(); recalc();
       });
     };
-    bind("month","month");
-    bind("reporter","reporter");
-    bind("salesRep","salesRep");
+    bind("month","month","change");
     bind("pref","pref","change");
     bind("base","base");
+    bind("reporter","reporter");
+    bind("salesRep","salesRep");
     bind("goal","goal");
     bind("memo","memo");
     bind("taxRate","taxRate");
-    bind("salesMode","salesMode","change");
-
-    $("role").addEventListener("change", ()=>{
-      const r = getCurrentReport(); if(!r) return;
-      r.role = $("role").value;
-      saveDraft(); renderReportSelect(); renderDashboard();
-    });
-
-    // incentive fields
-    ["mgrPct","salesPct","incMin","incMax","alertRate"].forEach(id=>{
-      $(id).addEventListener("input", ()=>{
-        const r = getCurrentReport(); if(!r) return;
-        r[id] = $(id).value;
-        saveDraft(); recalcCurrent(); renderDashboard();
-      });
-    });
+    bind("alertRate","alertRate");
+    bind("mgrPct","mgrPct");
+    bind("salesPct","salesPct");
+    bind("incMin","incMin");
+    bind("incMax","incMax");
     $("incBase").addEventListener("change", ()=>{
-      const r = getCurrentReport(); if(!r) return;
-      r.incBase = $("incBase").value;
-      saveDraft(); recalcCurrent(); renderDashboard();
+      state.draft.report.incBase = $("incBase").value;
+      saveDraft(); recalc();
     });
 
-    // rows add
+    // add rows
     $("btnAddSale").addEventListener("click", ()=>{
-      const r = getCurrentReport(); if(!r) return;
-      r.sales.push({client:"", inputAmount:""});
-      saveDraft(); renderSales(); recalcCurrent(); renderDashboard();
+      state.draft.report.sales.push({client:"", pieces:"", inputAmount:""});
+      saveDraft(); renderSales(); recalc();
     });
     $("btnAddOut").addEventListener("click", ()=>{
-      const r = getCurrentReport(); if(!r) return;
-      r.outs.push({vendor:"", area:"", pieces:"", unit:0, inputAmount:""});
-      saveDraft(); renderOuts(); recalcCurrent(); renderDashboard();
+      state.draft.report.outs.push({vendor:"", area:"", pieces:"", inputAmount:""});
+      saveDraft(); renderOuts(); recalc();
     });
 
-    // OCR/PDF
-    $("btnParseInvoiceText").addEventListener("click", ()=>{
-      const raw = $("invoiceText").value;
-      const res = parseInvoiceText(raw);
-      setPreview(res.preview);
-      if(!res.applied) alert("金額が見つかりませんでした。OCRテキストを確認してください。");
+    // save/pdf/csv/clear
+    $("btnSaveDraft").addEventListener("click", ()=>{ saveDraft(); alert("保存しました"); });
+    $("btnPDF").addEventListener("click", ()=>{
+      fillPrint();
+      window.print();
     });
-    $("btnClearInvoiceText").addEventListener("click", ()=>{$("invoiceText").value="";});
-    $("btnParsePDF").addEventListener("click", async ()=>{
-      const f = $("pdfFile").files?.[0];
-      if(!f) return alert("PDFを選択してください");
-      try{
-        const txt = await parsePDFFile(f);
-        $("invoiceText").value = txt;
-        const res = parseInvoiceText(txt);
-        setPreview(res.preview);
-        if(!res.applied) alert("PDFから金額が拾えませんでした（画像PDFの可能性）。OCR貼付で対応してください。");
-      }catch(e){
-        alert("PDF解析に失敗しました。別のPDFで試すかOCR貼付でお願いします。");
-      }
+    $("btnCSV").addEventListener("click", exportCSV);
+    $("btnClear").addEventListener("click", ()=>{
+      if(!confirm("入力をクリアしますか？（マスター/履歴は残ります）")) return;
+      state.draft.report.sales = [{client:"", pieces:"", inputAmount:""}];
+      state.draft.report.outs  = [{vendor:"", area:"", pieces:"", inputAmount:""}];
+      state.draft.report.memo = "";
+      saveDraft(); renderSales(); renderOuts(); recalc();
     });
 
-    $("btnGoDash").addEventListener("click", ()=>{
-      renderDashboard();
-      setTab("dashboard");
-    });
-
-    // save history (1拠点)
+    // history
     $("btnSaveHistory").addEventListener("click", ()=>{
-      const r = getCurrentReport(); if(!r) return;
-      if(!r.month) return alert("対象月が未設定です");
-      const id = uid();
-      state.history.push({id, savedAt: new Date().toISOString(), snapshotReport: JSON.parse(JSON.stringify(r))});
-      saveHistory();
-      renderHistory();
-      alert("この拠点を履歴に保存しました");
+      const snap = JSON.parse(JSON.stringify(state.draft.report));
+      snap._id = uid();
+      snap.uiMode = state.draft.uiMode;
+      state.hist.push({savedAt:new Date().toISOString(), snapshot:snap});
+      saveHist(); renderHistory();
+      alert("履歴保存しました");
     });
-
-    // history load/delete
     $("btnLoadHistory").addEventListener("click", ()=>{
       const id = $("historySelect").value;
       if(!id) return;
-      const h = state.history.find(x=>x.id===id);
-      if(!h) return;
-      // 同じidで入れ替えではなく、新規拠点として追加（安全）
-      const rep = JSON.parse(JSON.stringify(h.snapshotReport));
-      rep.id = uid();
-      state.draft.reports.push(rep);
-      state.draft.currentReportId = rep.id;
-      saveDraft();
-      renderReportSelect();
-      hydrateUI();
-      renderDashboard();
+      const hit = state.hist.find(h=>h.snapshot._id===id);
+      if(!hit) return;
+      state.draft.report = JSON.parse(JSON.stringify(hit.snapshot));
+      state.draft.uiMode = state.draft.report.uiMode || state.draft.uiMode || "simple";
+      saveDraft(); hydrate();
       setTab("input");
     });
     $("btnDeleteHistory").addEventListener("click", ()=>{
       const id = $("historySelect").value;
       if(!id) return;
       if(!confirm("この履歴を削除しますか？")) return;
-      state.history = state.history.filter(x=>x.id!==id);
-      saveHistory();
-      renderHistory();
+      state.hist = state.hist.filter(h=>h.snapshot._id!==id);
+      saveHist(); renderHistory();
     });
 
-    // master buttons
+    // board
+    $("btnGoBoard").addEventListener("click", ()=>setTab("board"));
+    $("btnBoardRefresh").addEventListener("click", renderBoard);
+    $("btnBoardPrint").addEventListener("click", ()=>window.print());
+    $("boardMonth").addEventListener("change", renderBoard);
+    $("boardPref").addEventListener("change", renderBoard);
+    $("boardBaseQ").addEventListener("input", renderBoard);
+
+    // master add
     $("btnAddClient").addEventListener("click", ()=>{
-      const v = $("newClient").value.trim();
-      if(!v) return;
-      if(!state.master.clients.includes(v)) state.master.clients.push(v);
-      $("newClient").value = "";
-      saveMaster(); renderMaster(); renderSales();
+      const name = ($("newClientName").value||"").trim();
+      const unit = num($("newClientUnit").value);
+      if(!name || unit<=0) return alert("取引先名と単価を入力してください");
+      if(!(state.master.clients||[]).some(c=>c.name===name)){
+        state.master.clients.push({name, unitEx:unit});
+      }
+      $("newClientName").value=""; $("newClientUnit").value="";
+      saveMaster(); renderMaster(); renderSales(); recalc();
     });
-    $("btnAddVendor").addEventListener("click", ()=>{
-      const v = $("newVendor").value.trim();
-      if(!v) return;
-      if(!state.master.vendors.includes(v)) state.master.vendors.push(v);
-      $("newVendor").value = "";
-      saveMaster(); renderMaster(); renderOuts();
-    });
-    $("btnAddArea").addEventListener("click", ()=>{
-      const v = $("newArea").value.trim();
-      if(!v) return;
-      if(!state.master.areas.includes(v)) state.master.areas.push(v);
-      $("newArea").value = "";
-      saveMaster(); renderMaster(); renderOuts();
-    });
-    $("btnAddPrice").addEventListener("click", ()=>{
-      state.master.prices.push({vendor:"", area:"", unit:""});
-      renderMaster();
+    $("btnAddOutPrice").addEventListener("click", ()=>{
+      const vendor = ($("newVendor").value||"").trim();
+      const area = ($("newArea").value||"").trim();
+      const unit = num($("newOutUnit").value);
+      if(!vendor || !area || unit<=0) return alert("委託会社/地域/単価を入力してください");
+      state.master.outPrices.push({vendor, area, unitEx:unit});
+      $("newVendor").value=""; $("newArea").value=""; $("newOutUnit").value="";
+      saveMaster(); renderMaster(); renderOuts(); recalc();
     });
     $("btnSaveMaster").addEventListener("click", ()=>{
       // normalize
-      state.master.clients = (state.master.clients||[]).map(s=>String(s).trim()).filter(Boolean);
-      state.master.vendors = (state.master.vendors||[]).map(s=>String(s).trim()).filter(Boolean);
-      state.master.areas   = (state.master.areas||[]).map(s=>String(s).trim()).filter(Boolean);
-      state.master.prices  = (state.master.prices||[])
-        .map(p=>({vendor:String(p.vendor||"").trim(), area:String(p.area||"").trim(), unit:num(p.unit)}))
-        .filter(p=>p.vendor && p.area && p.unit>0);
+      state.master.clients = (state.master.clients||[])
+        .map(c=>({name:String(c.name||"").trim(), unitEx:num(c.unitEx)}))
+        .filter(c=>c.name && c.unitEx>0);
+      state.master.outPrices = (state.master.outPrices||[])
+        .map(o=>({vendor:String(o.vendor||"").trim(), area:String(o.area||"").trim(), unitEx:num(o.unitEx)}))
+        .filter(o=>o.vendor && o.area && o.unitEx>0);
 
       saveMaster();
-      // refresh units in all reports
-      state.draft.reports.forEach(r=>{
-        (r.outs||[]).forEach(o=>{
-          if(o.vendor && o.area){
-            o.unit = getUnitPrice(o.vendor, o.area);
-          }
-        });
-      });
-      saveDraft();
-      renderMaster();
-      renderOuts();
-      recalcCurrent();
-      renderDashboard();
-      alert("マスターを保存しました");
+      alert("マスター保存しました");
+      renderMaster(); renderSales(); renderOuts(); recalc();
     });
     $("btnResetMaster").addEventListener("click", ()=>{
-      if(!confirm("マスターを初期化します。よろしいですか？")) return;
+      if(!confirm("マスター初期化します。よろしいですか？")) return;
       localStorage.removeItem(LS_MASTER);
       loadAll();
-      renderMaster();
-      renderSales(); renderOuts();
-      recalcCurrent();
-      renderDashboard();
-      alert("初期化しました");
+      renderMaster(); renderSales(); renderOuts(); recalc();
+    });
+
+    // OCR modal controls
+    $("btnCloseModal").addEventListener("click", closeModal);
+    $("btnModalCancel").addEventListener("click", closeModal);
+    $("modalType").addEventListener("change", ()=>{
+      // party options update based on type
+      const t = $("modalType").value;
+      const opts = guessPartyOptions(modalCandidates.raw, t);
+      const sel = $("modalParty");
+      sel.innerHTML = "";
+      opts.forEach(o=>{
+        const op = document.createElement("option");
+        op.value=o.value; op.textContent=o.label;
+        sel.appendChild(op);
+      });
+    });
+
+    // OCR analyze
+    $("btnAnalyzeText").addEventListener("click", ()=>{
+      const raw = normalizeText($("invoiceText").value);
+      if(!raw) return alert("OCRテキストを貼り付けてください");
+      const type = guessType(raw);
+      const amounts = extractYenCandidates(raw);
+      const pieces = extractPiecesCandidates(raw);
+      modalCandidates = {amounts, pieces, raw};
+      const partyOptions = guessPartyOptions(raw, type);
+      openModal(type, partyOptions, amounts, pieces);
+    });
+    $("btnClearText").addEventListener("click", ()=>{$("invoiceText").value="";});
+
+    // PDF analyze
+    $("btnAnalyzePDF").addEventListener("click", async ()=>{
+      const f = $("pdfFile").files?.[0];
+      if(!f) return alert("PDFを選択してください");
+      try{
+        const txt = normalizeText(await parsePDFFile(f));
+        $("invoiceText").value = txt;
+        const type = guessType(txt);
+        const amounts = extractYenCandidates(txt);
+        const pieces = extractPiecesCandidates(txt);
+        modalCandidates = {amounts, pieces, raw:txt};
+        const partyOptions = guessPartyOptions(txt, type);
+        openModal(type, partyOptions, amounts, pieces);
+      }catch(e){
+        alert("PDF解析に失敗しました（画像PDFの可能性）。OCR貼付でお願いします。");
+      }
     });
   }
 
-  // ========= Init =========
+  // ===== Init =====
   loadAll();
 
-  // Ensure draft has reports
-  if(!state.draft || !Array.isArray(state.draft.reports)){
-    state.draft = {uiMode:"normal", currentReportId:"", reports:[defaultReport()]};
-  }
-  if(!state.draft.reports.length){
-    state.draft.reports.push(defaultReport());
-  }
-  if(!state.draft.currentReportId){
-    state.draft.currentReportId = state.draft.reports[0].id;
-  }
+  // build selects
+  buildPrefSelect($("pref"), false);
+  buildPrefSelect($("boardPref"), true);
 
-  // Build pref selects
-  buildPrefSelect($("pref"));
+  // defaults
+  if(!state.draft?.report) state.draft.report = {month:nowMonth(), sales:[{client:"",pieces:"",inputAmount:""}], outs:[{vendor:"",area:"",pieces:"",inputAmount:""}]};
+  if(!state.draft.report.sales?.length) state.draft.report.sales=[{client:"",pieces:"",inputAmount:""}];
+  if(!state.draft.report.outs?.length) state.draft.report.outs=[{vendor:"",area:"",pieces:"",inputAmount:""}];
+  if(!state.draft.report.taxRate && state.draft.report.taxRate!==0) state.draft.report.taxRate=10;
 
-  // dashboard filters build
-  $("dashMonth").value = nowMonth();
-  $("dashPref").innerHTML = `<option value="">すべて</option>` + PREFS.filter(p=>p!=="エリア外/本部営業").map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join("") + `<option value="エリア外/本部営業">エリア外/本部営業</option>`;
+  // board month
+  $("boardMonth").value = state.draft.report.month || nowMonth();
+  $("boardPref").value = "";
 
-  // report select + UI
-  renderReportSelect();
-  hydrateUI();
-
-  // master/history/dashboard
   renderMaster();
   renderHistory();
-  renderDashboard();
-
+  hydrate();
   wire();
 
 })();
